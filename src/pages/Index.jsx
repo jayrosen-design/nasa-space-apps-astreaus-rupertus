@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
 import { constellations, zoomOptions, exoplanets, skyboxOptions, constellationStars } from '../data/starMapData';
 import ControlPanel from '../components/ControlPanel';
-import ExoplanetInfo from '../components/ExoplanetInfo';
 import { useTheme } from 'next-themes';
 
 const Index = () => {
@@ -56,11 +55,6 @@ const Index = () => {
     const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
     if (exoplanet && showExoplanets) {
       setSelectedExoplanet(exoplanet);
-      const coords = {
-        x: Math.random() * 1000 - 500,
-        y: Math.random() * 1000 - 500,
-        z: Math.random() * 1000 - 500
-      };
       starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
     } else if (!showExoplanets) {
       console.log("Exoplanets are currently hidden. Please enable them to navigate.");
@@ -97,8 +91,8 @@ const Index = () => {
     let autoplayInterval;
     if (autoplay) {
       autoplayInterval = setInterval(() => {
-        starMapRef.current?.rotateSkybox(0.001); // Slow rotation
-      }, 16); // ~60 fps
+        starMapRef.current?.rotateSkybox(0.001);
+      }, 16);
     }
     return () => {
       clearInterval(autoplayInterval);
@@ -116,6 +110,7 @@ const Index = () => {
         constellationStars={constellationStars}
         onStarClick={handleStarClick}
         onExoplanetClick={handleExoplanetClick}
+        autoplay={autoplay}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">
@@ -158,7 +153,6 @@ const Index = () => {
         showConstellationLines={showConstellationLines}
         setShowConstellationLines={setShowConstellationLines}
       />
-      {selectedExoplanet && <ExoplanetInfo exoplanet={selectedExoplanet} />}
     </div>
   );
 };
