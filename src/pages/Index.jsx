@@ -1,15 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { useTheme } from 'next-themes';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { constellations, zoomOptions, exoplanets, skyboxOptions } from '../data/starMapData';
 import ControlPanel from '../components/ControlPanel';
 import ExoplanetInfo from '../components/ExoplanetInfo';
+import { useTheme } from 'next-themes';
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
@@ -28,7 +22,12 @@ const Index = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    starMapRef.current?.navigateToCoordinates(coordinates);
+    navigateToCoordinates(coordinates);
+  };
+
+  const navigateToCoordinates = (coords) => {
+    setCoordinates(coords);
+    starMapRef.current?.navigateToCoordinates(coords);
   };
 
   const handleSkyboxChange = (value) => {
@@ -40,8 +39,7 @@ const Index = () => {
     const constellation = constellations.find(c => c.name === constellationName);
     if (constellation) {
       setSelectedConstellation(constellation);
-      setCoordinates(constellation.coordinates);
-      starMapRef.current?.navigateToCoordinates(constellation.coordinates);
+      navigateToCoordinates(constellation.coordinates);
     }
   };
 
@@ -73,8 +71,7 @@ const Index = () => {
           y: Math.random() * 1000 - 500,
           z: Math.random() * 1000 - 500
         };
-        setCoordinates(newCoords);
-        starMapRef.current?.navigateToCoordinates(newCoords);
+        navigateToCoordinates(newCoords);
       }, 5000); // Change position every 5 seconds
     }
     return () => clearInterval(intervalId);
