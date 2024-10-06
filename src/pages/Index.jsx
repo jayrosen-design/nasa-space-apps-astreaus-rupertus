@@ -155,6 +155,7 @@ const Index = () => {
         setShowConstellationLines={setShowConstellationLines}
         selectedExoplanet={selectedExoplanet}
         selectedStar={selectedStar}
+        constellationStars={constellationStars} // Add this new prop
       />
     </div>
   );

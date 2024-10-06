@@ -61,6 +61,7 @@ const ControlPanel = ({
   setShowConstellationLines,
   selectedExoplanet,
   selectedStar,
+  constellationStars, // Add this new prop
 }) => (
   <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
@@ -101,7 +102,14 @@ const ControlPanel = ({
         {renderSelect(handleConstellationChange, selectedConstellation?.name, "Select Constellation", constellations, "name", "name")}
         {renderSelect(handleZoomChange, zoom.toString(), "Select Zoom", zoomOptions, "value", "label")}
         {renderSelect(handleExoplanetChange, selectedExoplanet?.exoplanet_name, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
-        {renderSelect(handleConstellationStarChange, selectedStar?.star_name, "Select Constellation Star", constellations.flatMap(c => c.stars), "star_name", "star_name")}
+        {renderSelect(
+          handleConstellationStarChange,
+          selectedStar?.star_name,
+          "Select Constellation Star",
+          constellationStars, // Use constellationStars directly
+          "star_name",
+          "star_name"
+        )}
       </div>
     </form>
   </div>
