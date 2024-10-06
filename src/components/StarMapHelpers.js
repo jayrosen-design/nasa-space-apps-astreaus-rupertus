@@ -12,10 +12,10 @@ export const createSkybox = (url) => {
 export const createLabel = (text, position, offset) => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  context.font = 'Bold 32px Arial';
+  context.font = 'Bold 64px Arial'; // Increased font size
   context.fillStyle = 'rgba(255,255,255,0.95)';
   context.textAlign = 'center';
-  context.fillText(text, canvas.width / 2, 32);
+  context.fillText(text, canvas.width / 2, 64);
   
   const texture = new THREE.CanvasTexture(canvas);
   const spriteMaterial = new THREE.SpriteMaterial({
@@ -23,8 +23,8 @@ export const createLabel = (text, position, offset) => {
     transparent: true,
   });
   const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(position.x, position.y + offset + 2, position.z);
-  sprite.scale.set(20, 10, 1);
+  sprite.position.set(position.x, position.y + offset + 0.5, position.z); // Moved closer to the object
+  sprite.scale.set(40, 20, 1); // Increased scale for larger text
   return sprite;
 };
 
@@ -39,7 +39,9 @@ export const createExoplanets = (exoplanets) => {
       color: new THREE.Color(Math.random(), Math.random(), Math.random()),
       emissive: 0x111111,
       specular: 0x333333,
-      shininess: 30
+      shininess: 30,
+      transparent: true,
+      opacity: 0.9 // Added transparency to remove black background
     });
     const sphere = new THREE.Mesh(geometry, material);
     
@@ -68,7 +70,11 @@ export const createConstellationStars = (constellationStars) => {
 
   constellationStars.forEach((star) => {
     const geometry = new THREE.SphereGeometry(2, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const material = new THREE.MeshBasicMaterial({ 
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.9 // Added transparency to remove black background
+    });
     const sphere = new THREE.Mesh(geometry, material);
     
     const phi = (90 - star.dec) * (Math.PI / 180);

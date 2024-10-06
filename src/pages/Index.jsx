@@ -46,13 +46,11 @@ const Index = () => {
     }
   };
 
-
   const handleZoomChange = (value) => {
     const zoomValue = parseInt(value);
     setZoom(zoomValue);
     starMapRef.current?.setZoom(zoomValue);
   };
-
 
   const handleExoplanetChange = (exoplanetName) => {
     const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
@@ -65,30 +63,19 @@ const Index = () => {
     }
   };
 
-
   const handleConstellationStarChange = (starName) => {
     const star = constellationStars.find(s => s.star_name === starName);
     if (star) {
       setSelectedObject(star);
       setSelectedObjectType('star');
-      const coords = {
-        x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
-        y: Math.sin(star.dec * Math.PI / 180) * 400,
-        z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
-      };
-      navigateToCoordinates(coords);
+      starMapRef.current?.navigateToStar(starName);
     }
   };
 
   const handleStarClick = (star) => {
     setSelectedObject(star);
     setSelectedObjectType('star');
-    const coords = {
-      x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
-      y: Math.sin(star.dec * Math.PI / 180) * 400,
-      z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
-    };
-    navigateToCoordinates(coords);
+    starMapRef.current?.navigateToStar(star.star_name);
   };
 
   const handleExoplanetClick = (exoplanet) => {
@@ -148,17 +135,6 @@ const Index = () => {
   useEffect(() => {
     starMapRef.current?.updateSkyboxes();
   }, [activeSkyboxes]);
-
-  useEffect(() => {
-    let autoplayInterval;
-    if (autoplay) {
-      autoplayInterval = setInterval(() => {
-        starMapRef.current?.rotateSkybox(0.001);
-      }, 16);
-    }
-    return () => clearInterval(autoplayInterval);
-  }, [autoplay]);
-
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
