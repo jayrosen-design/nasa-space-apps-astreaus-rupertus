@@ -9,7 +9,11 @@ const Index = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCoordinates(prev => ({ ...prev, [name]: parseFloat(value) }));
+    const newCoordinates = { ...coordinates, [name]: parseFloat(value) };
+    setCoordinates(newCoordinates);
+    if (starMapRef.current) {
+      starMapRef.current.rotateSkybox(newCoordinates);
+    }
   };
 
   const handleSubmit = (e) => {

@@ -8,12 +8,20 @@ const StarMap = forwardRef((props, ref) => {
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const rendererRef = useRef(null);
+  const skyboxRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
       if (cameraRef.current) {
         cameraRef.current.position.set(coords.x, coords.y, coords.z);
         controlsRef.current?.update();
+      }
+    },
+    rotateSkybox: (coords) => {
+      if (skyboxRef.current) {
+        skyboxRef.current.rotation.x = coords.x * Math.PI / 180;
+        skyboxRef.current.rotation.y = coords.y * Math.PI / 180;
+        skyboxRef.current.rotation.z = coords.z * Math.PI / 180;
       }
     }
   }));
@@ -36,7 +44,11 @@ const StarMap = forwardRef((props, ref) => {
     loader.load('https://jayrosen.design/nasa/skybox-space.jpg', (texture) => {
       const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
       rt.fromEquirectangularTexture(renderer, texture);
-      scene.background = rt.texture;
+      const skyboxGeometry = new THREE.BoxGeometry(500, 500, 500);
+      const skyboxMaterial = new THREE.MeshBasicMaterial({ envMap: rt.texture, side: THREE.BackSide });
+      const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+      skyboxRef.current = skybox;
+      scene.add(skybox);
     });
 
     // Camera position
