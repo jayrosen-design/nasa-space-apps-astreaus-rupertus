@@ -115,6 +115,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
 
   useEffect(() => {
     const canvas = canvasRef.current;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
     if (isDrawMode) {
       canvas.style.pointerEvents = 'auto';
       controlsRef.current.enabled = false;
@@ -161,7 +164,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
           left: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none',
+          pointerEvents: isDrawMode ? 'auto' : 'none',
         }}
       />
     </div>
