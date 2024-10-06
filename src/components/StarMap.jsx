@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { exoplanets, constellationStars, constellations, skyboxOptions } from '../data/starMapData';
+import { exoplanets, constellationStars, constellations } from '../data/starMapData';
 import { createExoplanets, createConstellationStars, createConstellationLines } from './StarMapHelpers';
 
 const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes }, ref) => {
@@ -72,18 +72,14 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       }
     },
     updateSkyboxes: updateSkyboxes,
-    setZoom: (focalLength) => {
-      if (cameraRef.current) {
-        const newZoom = focalLength / 35;
-        cameraRef.current.zoom = newZoom;
-        cameraRef.current.updateProjectionMatrix();
-        controlsRef.current.update();
-      }
-    },
-    navigateToExoplanet: (name) => {
-      const exoplanetObj = exoplanetsRef.current[name];
-      if (exoplanetObj && exoplanetObj.sphere) {
-        zoomToObject(exoplanetObj.sphere.position, exoplanetObj.sphere.geometry.parameters.radius);
+    updateSkybox: (url) => {
+      if (sceneRef.current) {
+        const skybox = createSkybox(url);
+        Object.values(skyboxesRef.current).forEach(oldSkybox => {
+          sceneRef.current.remove(oldSkybox);
+        });
+        skyboxesRef.current = { main: skybox };
+        sceneRef.current.add(skybox);
       }
     },
   }));
