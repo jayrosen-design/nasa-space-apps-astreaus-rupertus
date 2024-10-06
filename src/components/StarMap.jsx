@@ -19,18 +19,22 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
 
+  const zoomToObject = (position, radius = 10) => {
+    if (cameraRef.current && controlsRef.current) {
+      const distance = radius * 3; // Adjust this multiplier to change how close the camera gets
+      const direction = new THREE.Vector3().subVectors(cameraRef.current.position, position).normalize();
+      const newPosition = new THREE.Vector3().addVectors(position, direction.multiplyScalar(distance));
+      
+      cameraRef.current.position.copy(newPosition);
+      controlsRef.current.target.copy(position);
+      controlsRef.current.update();
+    }
+  };
+
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
-      if (cameraRef.current && controlsRef.current) {
-        const targetPosition = new THREE.Vector3(coords.x, coords.y, coords.z);
-        const distance = 50; // Adjust this value to change how close the camera gets to the target
-        const direction = new THREE.Vector3().subVectors(cameraRef.current.position, targetPosition).normalize();
-        const newPosition = new THREE.Vector3().addVectors(targetPosition, direction.multiplyScalar(distance));
-        
-        cameraRef.current.position.copy(newPosition);
-        controlsRef.current.target.copy(targetPosition);
-        controlsRef.current.update();
-      }
+      const position = new THREE.Vector3(coords.x, coords.y, coords.z);
+      zoomToObject(position);
     },
     rotateSkybox: (rotation) => {
       if (skyboxRef.current && autoplay) {
@@ -55,16 +59,8 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       const exoplanetObj = exoplanetsRef.current[name];
       if (exoplanetObj && exoplanetObj.sphere) {
         const position = exoplanetObj.sphere.position;
-        const offset = 50;
-        const newCameraPosition = new THREE.Vector3(
-          position.x + offset,
-          position.y + offset,
-          position.z + offset
-        );
-        
-        cameraRef.current.position.copy(newCameraPosition);
-        controlsRef.current.target.copy(position);
-        controlsRef.current.update();
+        const radius = exoplanetObj.sphere.geometry.parameters.radius;
+        zoomToObject(position, radius);
         
         const originalColor = exoplanetObj.sphere.material.color.getHex();
         exoplanetObj.sphere.material.color.setHex(0xffff00);
@@ -133,14 +129,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     rendererRef.current.render(sceneRef.current, cameraRef.current);
   };
 
-  const handleResize = () => {
-    if (cameraRef.current && rendererRef.current) {
-      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
-      cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
-    }
-  };
-
   const handleClick = (event) => {
     event.preventDefault();
     mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -153,23 +141,11 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     if (starIntersects.length > 0) {
       const clickedStar = starIntersects[0].object.userData;
       onStarClick(clickedStar);
-      cameraRef.current.position.set(
-        starIntersects[0].object.position.x + 20,
-        starIntersects[0].object.position.y + 20,
-        starIntersects[0].object.position.z + 20
-      );
-      controlsRef.current.target.copy(starIntersects[0].object.position);
-      controlsRef.current.update();
+      zoomToObject(starIntersects[0].object.position, starIntersects[0].object.geometry.parameters.radius);
     } else if (exoplanetIntersects.length > 0 && showExoplanets) {
       const clickedExoplanet = exoplanetIntersects[0].object.userData;
       onExoplanetClick(clickedExoplanet);
-      cameraRef.current.position.set(
-        exoplanetIntersects[0].object.position.x + 50,
-        exoplanetIntersects[0].object.position.y + 50,
-        exoplanetIntersects[0].object.position.z + 50
-      );
-      controlsRef.current.target.copy(exoplanetIntersects[0].object.position);
-      controlsRef.current.update();
+      zoomToObject(exoplanetIntersects[0].object.position, exoplanetIntersects[0].object.geometry.parameters.radius);
     }
   };
 
