@@ -59,6 +59,8 @@ const ControlPanel = ({
   setShowStarNames,
   showConstellationLines,
   setShowConstellationLines,
+  selectedExoplanet,
+  selectedStar,
 }) => (
   <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
@@ -96,10 +98,10 @@ const ControlPanel = ({
       
       <div className="flex items-center space-x-2 flex-wrap">
         {renderSelect(handleSkyboxChange, skyboxUrl, "Select Skybox", skyboxOptions, "value", "label")}
-        {renderSelect(handleConstellationChange, selectedConstellation, "Select Constellation", constellations, "name", "name")}
+        {renderSelect(handleConstellationChange, selectedConstellation?.name, "Select Constellation", constellations, "name", "name")}
         {renderSelect(handleZoomChange, zoom.toString(), "Select Zoom", zoomOptions, "value", "label")}
-        {renderSelect(handleExoplanetChange, null, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
-        {renderSelect(handleConstellationStarChange, selectedConstellation, "Select Constellation Star", constellations, "name", "name")}
+        {renderSelect(handleExoplanetChange, selectedExoplanet?.exoplanet_name, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
+        {renderSelect(handleConstellationStarChange, selectedStar?.star_name, "Select Constellation Star", constellations.flatMap(c => c.stars), "star_name", "star_name")}
       </div>
     </form>
   </div>

@@ -18,6 +18,19 @@ const Index = () => {
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
+  const handleConstellationStarChange = (starName) => {
+    const star = constellationStars.find(s => s.star_name === starName);
+    if (star) {
+      setSelectedStar(star);
+      const coords = {
+        x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
+        y: Math.sin(star.dec * Math.PI / 180) * 400,
+        z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
+      };
+      navigateToCoordinates(coords);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCoordinates(prev => ({ ...prev, [name]: parseFloat(value) }));
@@ -156,6 +169,8 @@ const Index = () => {
         setShowStarNames={setShowStarNames}
         showConstellationLines={showConstellationLines}
         setShowConstellationLines={setShowConstellationLines}
+        selectedExoplanet={selectedExoplanet}
+        selectedStar={selectedStar}
       />
     </div>
   );

@@ -124,7 +124,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   const animate = () => {
     requestAnimationFrame(animate);
     controlsRef.current.update();
-    if (skyboxRef.current && autoplay) {
+    if (autoplay && skyboxRef.current) {
       skyboxRef.current.rotation.y += 0.0001;
     }
     Object.values(exoplanetsRef.current).forEach(({ label }) => {
