@@ -59,6 +59,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     }
   }, [activeSkyboxes, createSkybox]);
 
+  const navigateToExoplanet = useCallback((exoplanetName) => {
+    const exoplanet = exoplanetsRef.current[exoplanetName];
+    if (exoplanet) {
+      zoomToObject(exoplanet.sphere.position, exoplanet.sphere.geometry.parameters.radius);
+    }
+  }, [zoomToObject]);
+
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
       const position = new THREE.Vector3(coords.x, coords.y, coords.z);
@@ -89,6 +96,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         controlsRef.current.update();
       }
     },
+    navigateToExoplanet,
   }));
 
   const setupScene = useCallback(() => {

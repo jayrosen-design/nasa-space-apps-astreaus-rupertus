@@ -53,16 +53,18 @@ const Index = () => {
     starMapRef.current?.setZoom(zoomValue);
   };
 
+
   const handleExoplanetChange = (exoplanetName) => {
     const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
     if (exoplanet && showExoplanets) {
       setSelectedObject(exoplanet);
       setSelectedObjectType('exoplanet');
-      starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
+      starMapRef.current?.navigateToExoplanet(exoplanetName);
     } else if (!showExoplanets) {
       console.log("Exoplanets are currently hidden. Please enable them to navigate.");
     }
   };
+
 
   const handleConstellationStarChange = (starName) => {
     const star = constellationStars.find(s => s.star_name === starName);
@@ -156,6 +158,7 @@ const Index = () => {
     }
     return () => clearInterval(autoplayInterval);
   }, [autoplay]);
+
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
