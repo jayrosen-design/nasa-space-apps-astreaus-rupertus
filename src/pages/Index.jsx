@@ -7,7 +7,6 @@ import { useTheme } from 'next-themes';
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
-  const [skyboxUrl, setSkyboxUrl] = useState('https://i.imgur.com/VhVRrHk.jpeg');
   const [zoom, setZoom] = useState(35);
   const [selectedObject, setSelectedObject] = useState(null);
   const [selectedObjectType, setSelectedObjectType] = useState(null);
@@ -147,11 +146,20 @@ const Index = () => {
     starMapRef.current?.updateSkyboxes();
   }, [activeSkyboxes]);
 
+  useEffect(() => {
+    let autoplayInterval;
+    if (autoplay) {
+      autoplayInterval = setInterval(() => {
+        starMapRef.current?.rotateSkybox(0.001);
+      }, 16);
+    }
+    return () => clearInterval(autoplayInterval);
+  }, [autoplay]);
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap 
         ref={starMapRef} 
-        initialSkyboxUrl={skyboxUrl} 
         showExoplanets={showExoplanets}
         showStarNames={showStarNames}
         showConstellationLines={showConstellationLines}
@@ -173,8 +181,6 @@ const Index = () => {
         setAutoplay={setAutoplay}
         theme={theme}
         setTheme={setTheme}
-        skyboxUrl={skyboxUrl}
-        handleSkyboxChange={handleSkyboxChange}
         handleConstellationChange={handleConstellationChange}
         zoom={zoom}
         handleZoomChange={handleZoomChange}

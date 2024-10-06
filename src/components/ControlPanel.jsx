@@ -41,8 +41,6 @@ const ControlPanel = ({
   setAutoplay,
   theme,
   setTheme,
-  skyboxUrl,
-  handleSkyboxChange,
   handleConstellationChange,
   zoom,
   handleZoomChange,
@@ -100,7 +98,6 @@ const ControlPanel = ({
       </div>
       
       <div className="flex items-center space-x-2 flex-wrap">
-        {renderSelect(handleSkyboxChange, skyboxUrl, "Select Skybox", skyboxOptions, "value", "label")}
         {renderSelect(handleConstellationChange, selectedConstellation?.name, "Select Constellation", constellations, "name", "name")}
         {renderSelect(handleZoomChange, zoom.toString(), "Select Zoom", zoomOptions, "value", "label")}
         {renderSelect(handleExoplanetChange, selectedExoplanet?.exoplanet_name, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
