@@ -51,8 +51,10 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     },
     setZoom: (focalLength) => {
       if (cameraRef.current) {
-        cameraRef.current.zoom = focalLength / 35;
+        const newZoom = focalLength / 35;
+        cameraRef.current.zoom = newZoom;
         cameraRef.current.updateProjectionMatrix();
+        controlsRef.current.update();
       }
     },
     navigateToExoplanet: (name) => {

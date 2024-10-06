@@ -47,8 +47,9 @@ const Index = () => {
   };
 
   const handleZoomChange = (value) => {
-    setZoom(parseInt(value));
-    starMapRef.current?.setZoom(parseInt(value));
+    const zoomValue = parseInt(value);
+    setZoom(zoomValue);
+    starMapRef.current?.setZoom(zoomValue);
   };
 
   const handleExoplanetChange = (exoplanetName) => {
