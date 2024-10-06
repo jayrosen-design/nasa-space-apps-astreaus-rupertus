@@ -21,9 +21,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     },
     rotateSkybox: (rotation) => {
       if (skyboxRef.current) {
-        skyboxRef.current.rotation.x = rotation.x;
-        skyboxRef.current.rotation.y = rotation.y;
-        skyboxRef.current.rotation.z = rotation.z;
+        skyboxRef.current.rotation.y += rotation;
       }
     },
     updateSkybox: (url) => {
@@ -124,6 +122,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
+      if (skyboxRef.current) {
+        skyboxRef.current.rotation.y += 0.0001; // Slow rotation around y-axis
+      }
       labelsRef.current.forEach(label => {
         label.quaternion.copy(camera.quaternion);
       });

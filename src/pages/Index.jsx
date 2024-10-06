@@ -66,29 +66,13 @@ const Index = () => {
     let autoplayInterval;
     if (autoplay) {
       autoplayInterval = setInterval(() => {
-        setCoordinates(prev => ({
-          x: prev.x + 1,
-          y: prev.y + 1,
-          z: prev.z + 1
-        }));
-      }, 100); // Move every 0.1 seconds
+        starMapRef.current?.rotateSkybox(0.001); // Slow rotation
+      }, 16); // ~60 fps
     }
     return () => {
       clearInterval(autoplayInterval);
     };
   }, [autoplay]);
-
-  useEffect(() => {
-    if (autoplay) {
-      starMapRef.current?.navigateToCoordinates(coordinates);
-    }
-  }, [coordinates, autoplay]);
-
-  useEffect(() => {
-    if (selectedConstellation) {
-      starMapRef.current?.navigateToCoordinates(selectedConstellation.coordinates);
-    }
-  }, [selectedConstellation]);
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
