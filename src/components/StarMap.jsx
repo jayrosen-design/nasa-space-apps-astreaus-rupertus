@@ -19,13 +19,11 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
         controlsRef.current?.update();
       }
     },
-    rotateSkybox: (coords) => {
+    rotateSkybox: (rotation) => {
       if (skyboxRef.current) {
-        skyboxRef.current.rotation.set(
-          coords.x * Math.PI / 180,
-          coords.y * Math.PI / 180,
-          coords.z * Math.PI / 180
-        );
+        skyboxRef.current.rotation.x = rotation.x;
+        skyboxRef.current.rotation.y = rotation.y;
+        skyboxRef.current.rotation.z = rotation.z;
       }
     },
     updateSkybox: (url) => {
@@ -93,7 +91,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    // Add constellation labels
     const constellations = [
       { name: 'Orion', position: new THREE.Vector3(83.82, 5.39, -2.42) },
       { name: 'Ursa Major', position: new THREE.Vector3(165.46, 61.75, -8.93) },
