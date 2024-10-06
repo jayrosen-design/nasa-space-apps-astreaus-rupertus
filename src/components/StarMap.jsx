@@ -1,16 +1,12 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback, useState } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { exoplanets, constellationStars, constellations } from '../data/starMapData';
-import { createExoplanets, createConstellationStars, createConstellationLines, createLabel } from './StarMapHelpers';
 import { useStarMapSetup } from '../hooks/useStarMapSetup';
 import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 
 const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes, isDrawMode }, ref) => {
   const mountRef = useRef(null);
+  const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingLines, setDrawingLines] = useState([]);
-  const currentLineRef = useRef(null);
 
   const {
     sceneRef,
@@ -48,8 +44,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     onExoplanetClick,
     isDrawMode,
     setIsDrawing,
-    currentLineRef,
-    setDrawingLines
+    canvasRef
   );
 
   useImperativeHandle(ref, () => ({
@@ -107,24 +102,39 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     setupScene();
     animate();
     window.addEventListener('resize', handleResize);
-    window.addEventListener('click', handleClick);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
-
+    
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('click', handleClick);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [setupScene, animate, handleResize, handleClick, handleMouseDown, handleMouseMove, handleMouseUp]);
+  }, [setupScene, animate, handleResize]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (isDrawMode) {
+      canvas.style.pointerEvents = 'auto';
+      controlsRef.current.enabled = false;
+    } else {
+      canvas.style.pointerEvents = 'none';
+      controlsRef.current.enabled = true;
+    }
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('click', handleClick);
+
+    return () => {
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('click', handleClick);
+    };
+  }, [isDrawMode, handleMouseDown, handleMouseMove, handleMouseUp, handleClick]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
@@ -141,7 +151,21 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     });
   }, [showExoplanets, showStarNames, showConstellationLines]);
 
-  return <div ref={mountRef} style={{ width: '100%', height: '100vh' }} />;
+  return (
+    <div ref={mountRef} style={{ width: '100%', height: '100vh', position: 'relative' }}>
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          pointerEvents: 'none',
+        }}
+      />
+    </div>
+  );
 });
 
 export default StarMap;
