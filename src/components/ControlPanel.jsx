@@ -27,6 +27,10 @@ const ControlPanel = ({
   setShowExoplanets,
   selectedConstellation,
   handleConstellationStarChange,
+  showStarNames,
+  setShowStarNames,
+  showConstellationLines,
+  setShowConstellationLines,
 }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
@@ -58,6 +62,7 @@ const ControlPanel = ({
           />
           <Button type="submit">Navigate</Button>
         </div>
+        <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -96,6 +101,32 @@ const ControlPanel = ({
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               Show Exoplanets
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-star-names"
+              checked={showStarNames}
+              onCheckedChange={setShowStarNames}
+            />
+            <label
+              htmlFor="show-star-names"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show Star Names
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-constellation-lines"
+              checked={showConstellationLines}
+              onCheckedChange={setShowConstellationLines}
+            />
+            <label
+              htmlFor="show-constellation-lines"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show Constellation Lines
             </label>
           </div>
         </div>
@@ -160,7 +191,6 @@ const ControlPanel = ({
               ))}
             </SelectContent>
           </Select>
-        </div>
       </form>
     </div>
   );

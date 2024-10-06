@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { exoplanets, constellationStars } from '../data/starMapData';
+import { exoplanets, constellationStars, constellations } from '../data/starMapData';
 
-const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const rendererRef = useRef(null);
   const skyboxRef = useRef(null);
-  const labelsRef = useRef([]);
+  const starsRef = useRef({});
   const exoplanetsRef = useRef({});
+  const constellationLinesRef = useRef([]);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -145,22 +146,31 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
         scene.add(sphere);
 
         // Add star name label
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        context.font = 'Bold 20px Arial';
-        context.fillStyle = 'rgba(255,255,255,0.95)';
-        context.fillText(star.star_name, 0, 20);
-        const texture = new THREE.CanvasTexture(canvas);
-        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.position.set(sphere.position.x, sphere.position.y + 3, sphere.position.z);
-        sprite.scale.set(20, 10, 1);
-        scene.add(sprite);
+        const label = createLabel(star.star_name, sphere.position, 3);
+        scene.add(label);
+        starsRef.current[star.star_name] = { sphere, label };
+      });
+    };
+
+    const addConstellationLines = () => {
+      constellations.forEach((constellation) => {
+        const stars = constellationStars.filter(star => star.constellation === constellation.name);
+        for (let i = 0; i < stars.length - 1; i++) {
+          const startStar = starsRef.current[stars[i].star_name].sphere;
+          const endStar = starsRef.current[stars[i + 1].star_name].sphere;
+          
+          const geometry = new THREE.BufferGeometry().setFromPoints([startStar.position, endStar.position]);
+          const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
+          const line = new THREE.Line(geometry, material);
+          scene.add(line);
+          constellationLinesRef.current.push(line);
+        }
       });
     };
 
     addExoplanets();
     addConstellationStars();
+    addConstellationLines();
 
     // Add ambient light
     const ambientLight = new THREE.AmbientLight(0x404040);
@@ -203,13 +213,21 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
     };
   }, [initialSkyboxUrl]);
 
-  // Update exoplanet visibility
+  // Update visibility of elements
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
       sphere.visible = showExoplanets;
       label.visible = showExoplanets;
     });
-  }, [showExoplanets]);
+
+    Object.values(starsRef.current).forEach(({ label }) => {
+      label.visible = showStarNames;
+    });
+
+    constellationLinesRef.current.forEach(line => {
+      line.visible = showConstellationLines;
+    });
+  }, [showExoplanets, showStarNames, showConstellationLines]);
 
   return <div ref={mountRef} style={{ width: '100%', height: '100vh' }} />;
 });

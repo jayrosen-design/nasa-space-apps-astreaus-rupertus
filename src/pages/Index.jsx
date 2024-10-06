@@ -13,6 +13,8 @@ const Index = () => {
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedExoplanet, setSelectedExoplanet] = useState(null);
   const [showExoplanets, setShowExoplanets] = useState(true);
+  const [showStarNames, setShowStarNames] = useState(true);
+  const [showConstellationLines, setShowConstellationLines] = useState(true);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
@@ -96,6 +98,8 @@ const Index = () => {
         ref={starMapRef} 
         initialSkyboxUrl={skyboxUrl} 
         showExoplanets={showExoplanets}
+        showStarNames={showStarNames}
+        showConstellationLines={showConstellationLines}
         constellationStars={constellationStars}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
@@ -132,6 +136,10 @@ const Index = () => {
         setShowExoplanets={setShowExoplanets}
         selectedConstellation={selectedConstellation}
         handleConstellationStarChange={handleConstellationStarChange}
+        showStarNames={showStarNames}
+        setShowStarNames={setShowStarNames}
+        showConstellationLines={showConstellationLines}
+        setShowConstellationLines={setShowConstellationLines}
       />
       {selectedExoplanet && <ExoplanetInfo exoplanet={selectedExoplanet} />}
     </div>
