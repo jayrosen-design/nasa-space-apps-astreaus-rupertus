@@ -66,12 +66,9 @@ const Index = () => {
     let intervalId;
     if (autoplay) {
       intervalId = setInterval(() => {
-        const newCoords = {
-          x: Math.random() * 1000 - 500,
-          y: Math.random() * 1000 - 500,
-          z: Math.random() * 1000 - 500
-        };
-        navigateToCoordinates(newCoords);
+        const randomConstellation = constellations[Math.floor(Math.random() * constellations.length)];
+        navigateToCoordinates(randomConstellation.coordinates);
+        setSelectedConstellation(randomConstellation);
       }, 5000); // Change position every 5 seconds
     }
     return () => clearInterval(intervalId);
