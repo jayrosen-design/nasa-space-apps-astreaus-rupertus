@@ -6,10 +6,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Menu } from 'lucide-react';
+import { playClickSound } from '../utils/audio';
 
 const renderCheckbox = (id, checked, onChange, label) => (
   <div className="flex items-center space-x-2">
-    <Checkbox id={id} checked={checked} onCheckedChange={onChange} />
+    <Checkbox 
+      id={id} 
+      checked={checked} 
+      onCheckedChange={(value) => {
+        playClickSound();
+        onChange(value);
+      }} 
+    />
     <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
       {label}
     </label>
@@ -19,7 +27,13 @@ const renderCheckbox = (id, checked, onChange, label) => (
 const renderSelect = (onValueChange, value, placeholder, options, valueKey, labelKey) => (
   <div className="flex flex-col space-y-1">
     <Label>{placeholder}</Label>
-    <Select onValueChange={onValueChange} value={value || ''}>
+    <Select 
+      onValueChange={(newValue) => {
+        playClickSound();
+        onValueChange(newValue);
+      }} 
+      value={value || ''}
+    >
       <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
@@ -67,13 +81,20 @@ const ControlPanel = ({
     <Button
       className="absolute -top-10 left-4 p-2"
       variant="outline"
-      onClick={toggleVisibility}
+      onClick={() => {
+        playClickSound();
+        toggleVisibility();
+      }}
       aria-label="Toggle control panel"
     >
       <Menu className="h-6 w-6" />
     </Button>
     <div className="p-4">
-      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        playClickSound();
+        handleSubmit(e);
+      }} className="flex flex-col space-y-4">
       <div className="flex flex-wrap gap-2 justify-center">
         {['x', 'y', 'z'].map((axis) => (
           <Input
@@ -95,7 +116,10 @@ const ControlPanel = ({
           <Switch
             id="dark-mode"
             checked={theme === 'dark'}
-            onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            onCheckedChange={() => {
+              playClickSound();
+              setTheme(theme === 'dark' ? 'light' : 'dark');
+            }}
           />
           <label htmlFor="dark-mode" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Dark Mode
@@ -127,7 +151,10 @@ const ControlPanel = ({
               <Checkbox
                 id={`skybox-${option.label}`}
                 checked={activeSkyboxes.some(skybox => skybox.label === option.label)}
-                onCheckedChange={(checked) => handleSkyboxToggle(option, checked)}
+                onCheckedChange={(checked) => {
+                  playClickSound();
+                  handleSkyboxToggle(option, checked);
+                }}
               />
               <label htmlFor={`skybox-${option.label}`} className="text-sm">
                 {option.label}
