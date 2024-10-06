@@ -52,7 +52,7 @@ export const useStarMapInteractions = (
   }, [isDrawMode, onStarClick, onExoplanetClick]);
 
   const handleMouseDown = useCallback((event) => {
-    if (isDrawMode) {
+    if (isDrawMode && canvasRef.current) {
       setIsDrawing(true);
       const ctx = canvasRef.current.getContext('2d');
       drawingContextRef.current = ctx;

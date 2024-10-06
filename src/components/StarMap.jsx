@@ -124,6 +124,8 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     } else {
       canvas.style.pointerEvents = 'none';
       controlsRef.current.enabled = true;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     canvas.addEventListener('mousedown', handleMouseDown);
@@ -165,6 +167,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
           width: '100%',
           height: '100%',
           pointerEvents: isDrawMode ? 'auto' : 'none',
+          zIndex: isDrawMode ? 1 : 0,
         }}
       />
     </div>
