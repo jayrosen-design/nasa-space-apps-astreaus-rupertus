@@ -20,10 +20,24 @@ const constellations = [
   { name: 'Pegasus', coordinates: { x: 344.41, y: 15.21, z: 3.51 } },
 ];
 
+const zoomOptions = [
+  { label: '10mm', value: 10 },
+  { label: '12mm', value: 12 },
+  { label: '16mm', value: 16 },
+  { label: '35mm', value: 35 },
+  { label: '55mm', value: 55 },
+  { label: '100mm', value: 100 },
+  { label: '135mm', value: 135 },
+  { label: '250mm', value: 250 },
+  { label: '350mm', value: 350 },
+  { label: '500mm', value: 500 },
+];
+
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
   const [skyboxUrl, setSkyboxUrl] = useState('https://jayrosen.design/nasa/GalaxyTex_NegativeX.png');
+  const [zoom, setZoom] = useState(35);
   const starMapRef = useRef(null);
 
   const skyboxOptions = [
@@ -61,6 +75,13 @@ const Index = () => {
       if (starMapRef.current) {
         starMapRef.current.navigateToCoordinates(constellation.coordinates);
       }
+    }
+  };
+
+  const handleZoomChange = (value) => {
+    setZoom(parseInt(value));
+    if (starMapRef.current) {
+      starMapRef.current.setZoom(parseInt(value));
     }
   };
 
@@ -152,6 +173,20 @@ const Index = () => {
                 {constellations.map((constellation) => (
                   <SelectItem key={constellation.name} value={constellation.name}>
                     {constellation.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Select onValueChange={handleZoomChange} defaultValue={zoom}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Zoom" />
+              </SelectTrigger>
+              <SelectContent>
+                {zoomOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>
