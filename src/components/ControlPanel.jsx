@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
+const ControlPanel = ({
 const ControlPanel = ({
   coordinates,
   handleInputChange,
@@ -41,19 +43,22 @@ const ControlPanel = ({
     </div>
   );
 
-  const renderSelect = (onValueChange, defaultValue, placeholder, options, valueKey, labelKey) => (
-    <Select onValueChange={onValueChange} defaultValue={defaultValue}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {options.map((option) => (
-          <SelectItem key={option[valueKey]} value={option[valueKey]}>
-            {option[labelKey]}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+  const renderSelect = (onValueChange, value, placeholder, options, valueKey, labelKey) => (
+    <div className="flex flex-col space-y-1">
+      <Label>{placeholder}</Label>
+      <Select onValueChange={onValueChange} value={value}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent>
+          {options.map((option) => (
+            <SelectItem key={option[valueKey]} value={option[valueKey]}>
+              {option[labelKey]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 
   return (
@@ -73,6 +78,7 @@ const ControlPanel = ({
           ))}
           <Button type="submit">Navigate</Button>
         </div>
+        
         <div className="flex items-center space-x-4 flex-wrap">
           {renderCheckbox("autoplay", autoplay, setAutoplay, "Autoplay")}
           <div className="flex items-center space-x-2">
@@ -89,10 +95,11 @@ const ControlPanel = ({
           {renderCheckbox("show-star-names", showStarNames, setShowStarNames, "Show Star Names")}
           {renderCheckbox("show-constellation-lines", showConstellationLines, setShowConstellationLines, "Show Constellation Lines")}
         </div>
+        
         <div className="flex items-center space-x-2 flex-wrap">
           {renderSelect(handleSkyboxChange, skyboxUrl, "Select Skybox", skyboxOptions, "value", "label")}
-          {renderSelect(handleConstellationChange, null, "Select Constellation", constellations, "name", "name")}
-          {renderSelect(handleZoomChange, zoom, "Select Zoom", zoomOptions, "value", "label")}
+          {renderSelect(handleConstellationChange, selectedConstellation, "Select Constellation", constellations, "name", "name")}
+          {renderSelect(handleZoomChange, zoom.toString(), "Select Zoom", zoomOptions, "value", "label")}
           {renderSelect(handleExoplanetChange, null, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
           {renderSelect(handleConstellationStarChange, selectedConstellation, "Select Constellation Star", constellations, "name", "name")}
         </div>

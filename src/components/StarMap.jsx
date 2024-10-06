@@ -43,15 +43,18 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       }
     },
     navigateToExoplanet: (name) => {
-      const exoplanet = exoplanetsRef.current[name];
-      if (exoplanet && cameraRef.current) {
+      const exoplanetObj = exoplanetsRef.current[name];
+      if (exoplanetObj && exoplanetObj.sphere && cameraRef.current) {
+        const position = exoplanetObj.sphere.position;
         cameraRef.current.position.set(
-          exoplanet.position.x + 20,
-          exoplanet.position.y + 20,
-          exoplanet.position.z + 20
+          position.x + 20,
+          position.y + 20,
+          position.z + 20
         );
-        controlsRef.current?.target.copy(exoplanet.position);
+        controlsRef.current?.target.copy(position);
         controlsRef.current?.update();
+      } else {
+        console.warn(`Exoplanet ${name} not found or not properly initialized.`);
       }
     },
   }));
