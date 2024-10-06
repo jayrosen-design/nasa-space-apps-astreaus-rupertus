@@ -63,27 +63,26 @@ const Index = () => {
   };
 
   useEffect(() => {
-    let rotationInterval;
-    let constellationInterval;
+    let autoplayInterval;
     if (autoplay) {
-      let rotation = { x: 0, y: 0, z: 0 };
-      rotationInterval = setInterval(() => {
-        rotation.x += 0.1;
-        rotation.y += 0.1;
-        rotation.z += 0.1;
-        starMapRef.current?.rotateSkybox(rotation);
-      }, 100);
-
-      constellationInterval = setInterval(() => {
-        const randomConstellation = constellations[Math.floor(Math.random() * constellations.length)];
-        setSelectedConstellation(randomConstellation);
-      }, 10000); // Change constellation every 10 seconds
+      autoplayInterval = setInterval(() => {
+        setCoordinates(prev => ({
+          x: prev.x + 1,
+          y: prev.y + 1,
+          z: prev.z + 1
+        }));
+      }, 100); // Move every 0.1 seconds
     }
     return () => {
-      clearInterval(rotationInterval);
-      clearInterval(constellationInterval);
+      clearInterval(autoplayInterval);
     };
   }, [autoplay]);
+
+  useEffect(() => {
+    if (autoplay) {
+      starMapRef.current?.navigateToCoordinates(coordinates);
+    }
+  }, [coordinates, autoplay]);
 
   useEffect(() => {
     if (selectedConstellation) {
