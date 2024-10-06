@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { exoplanets } from '../data/starMapData';
 
 const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
   const mountRef = useRef(null);
@@ -38,23 +39,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
         cameraRef.current.updateProjectionMatrix();
       }
     },
-    addExoplanet: (name, coords) => {
-      if (sceneRef.current && !exoplanetsRef.current[name]) {
-        const geometry = new THREE.SphereGeometry(5, 32, 32);
-        const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(coords.x, coords.y, coords.z);
-        sceneRef.current.add(sphere);
-        exoplanetsRef.current[name] = sphere;
-      }
-    },
     navigateToExoplanet: (name) => {
       const exoplanet = exoplanetsRef.current[name];
       if (exoplanet && cameraRef.current) {
         cameraRef.current.position.set(
-          exoplanet.position.x + 10,
-          exoplanet.position.y + 10,
-          exoplanet.position.z + 10
+          exoplanet.position.x + 20,
+          exoplanet.position.y + 20,
+          exoplanet.position.z + 20
         );
         controlsRef.current?.target.copy(exoplanet.position);
         controlsRef.current?.update();
@@ -82,42 +73,60 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
       scene.add(skybox);
     });
 
-    camera.position.set(0, 0, 0.1);
+    camera.position.set(0, 0, 100);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controlsRef.current = controls;
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    const constellations = [
-      { name: 'Orion', position: new THREE.Vector3(83.82, 5.39, -2.42) },
-      { name: 'Ursa Major', position: new THREE.Vector3(165.46, 61.75, -8.93) },
-      { name: 'Cassiopeia', position: new THREE.Vector3(10.68, 59.15, 2.36) },
-      { name: 'Leo', position: new THREE.Vector3(177.47, 14.47, -10.76) },
-      { name: 'Scorpius', position: new THREE.Vector3(247.36, -26.43, -4.22) },
-      { name: 'Taurus', position: new THREE.Vector3(66.57, 16.51, -3.74) },
-      { name: 'Gemini', position: new THREE.Vector3(113.65, 28.03, -8.11) },
-      { name: 'Cygnus', position: new THREE.Vector3(305.56, 40.73, 4.22) },
-      { name: 'Canis Major', position: new THREE.Vector3(101.28, -16.71, -5.13) },
-      { name: 'Lyra', position: new THREE.Vector3(284.74, 32.69, 4.48) },
-      { name: 'Aquila', position: new THREE.Vector3(297.69, 8.87, 3.71) },
-      { name: 'Pegasus', position: new THREE.Vector3(344.41, 15.21, 3.51) },
-    ];
+    // Add exoplanets to the scene
+    exoplanets.forEach((exoplanet, index) => {
+      const radius = 5 + Math.random() * 5; // Random size between 5 and 10
+      const geometry = new THREE.SphereGeometry(radius, 32, 32);
+      const material = new THREE.MeshPhongMaterial({
+        color: Math.random() * 0xffffff,
+        emissive: 0x111111,
+        specular: 0x333333,
+        shininess: 30
+      });
+      const sphere = new THREE.Mesh(geometry, material);
+      
+      // Position planets in a spiral
+      const angle = index * 0.5;
+      const distance = 50 + index * 20;
+      sphere.position.set(
+        Math.cos(angle) * distance,
+        Math.sin(angle) * distance,
+        (Math.random() - 0.5) * 100
+      );
+      
+      scene.add(sphere);
+      exoplanetsRef.current[exoplanet.exoplanet_name] = sphere;
 
-    constellations.forEach(({ name, position }) => {
+      // Add planet name label
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       context.font = 'Bold 20px Arial';
       context.fillStyle = 'rgba(255,255,255,0.95)';
-      context.fillText(name, 0, 20);
+      context.fillText(exoplanet.exoplanet_name, 0, 20);
       const texture = new THREE.CanvasTexture(canvas);
       const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
       const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.position.copy(position);
-      sprite.scale.set(50, 25, 1);
+      sprite.position.set(sphere.position.x, sphere.position.y + radius + 5, sphere.position.z);
+      sprite.scale.set(40, 20, 1);
       scene.add(sprite);
       labelsRef.current.push(sprite);
     });
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -141,8 +150,33 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     };
     window.addEventListener('resize', handleResize);
 
+    // Add click event listener for planet selection
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const onMouseClick = (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(Object.values(exoplanetsRef.current));
+
+      if (intersects.length > 0) {
+        const selectedPlanet = intersects[0].object;
+        const planetName = Object.keys(exoplanetsRef.current).find(
+          key => exoplanetsRef.current[key] === selectedPlanet
+        );
+        if (planetName) {
+          ref.current.navigateToExoplanet(planetName);
+        }
+      }
+    };
+
+    window.addEventListener('click', onMouseClick);
+
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('click', onMouseClick);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
