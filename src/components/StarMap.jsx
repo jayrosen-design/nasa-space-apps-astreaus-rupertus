@@ -46,13 +46,40 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       const exoplanetObj = exoplanetsRef.current[name];
       if (exoplanetObj && exoplanetObj.sphere) {
         const position = exoplanetObj.sphere.position;
-        cameraRef.current.position.set(
-          position.x + 20,
-          position.y + 20,
-          position.z + 20
+        const offset = 30; // Increased offset for better visibility
+        const newCameraPosition = new THREE.Vector3(
+          position.x + offset,
+          position.y + offset,
+          position.z + offset
         );
-        controlsRef.current.target.copy(position);
-        controlsRef.current.update();
+        
+        // Animate camera movement
+        const startPosition = cameraRef.current.position.clone();
+        const animationDuration = 1000; // 1 second
+        const startTime = Date.now();
+        
+        const animateCamera = () => {
+          const currentTime = Date.now();
+          const elapsed = currentTime - startTime;
+          if (elapsed < animationDuration) {
+            const progress = elapsed / animationDuration;
+            cameraRef.current.position.lerpVectors(startPosition, newCameraPosition, progress);
+            requestAnimationFrame(animateCamera);
+          } else {
+            cameraRef.current.position.copy(newCameraPosition);
+          }
+          controlsRef.current.target.copy(position);
+          controlsRef.current.update();
+        };
+        
+        animateCamera();
+        
+        // Highlight the exoplanet
+        const originalColor = exoplanetObj.sphere.material.color.getHex();
+        exoplanetObj.sphere.material.color.setHex(0xffff00); // Yellow highlight
+        setTimeout(() => {
+          exoplanetObj.sphere.material.color.setHex(originalColor);
+        }, 2000); // Reset color after 2 seconds
       } else {
         console.warn(`Exoplanet ${name} not found or not properly initialized.`);
       }
@@ -98,17 +125,16 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         });
         const sphere = new THREE.Mesh(geometry, material);
         
-        // Position planets in a spiral
+        // Position planets in a wider spiral
         const angle = index * 0.5;
-        const distance = 50 + index * 20;
+        const distance = 100 + index * 30; // Increased distance between planets
         sphere.position.set(
           Math.cos(angle) * distance,
           Math.sin(angle) * distance,
-          (Math.random() - 0.5) * 100
+          (Math.random() - 0.5) * 200 // Increased z-range for more depth
         );
         
         scene.add(sphere);
-        exoplanetsRef.current[exoplanet.exoplanet_name] = sphere;
 
         // Add planet name label
         const label = createLabel(exoplanet.exoplanet_name, sphere.position, radius);
