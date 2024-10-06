@@ -87,6 +87,12 @@ const Index = () => {
     setSelectedConstellation(null);
   };
 
+  const handleExoplanetClick = (exoplanet) => {
+    setSelectedExoplanet(exoplanet);
+    setSelectedStar(null);
+    setSelectedConstellation(null);
+  };
+
   useEffect(() => {
     let autoplayInterval;
     if (autoplay) {
@@ -109,6 +115,7 @@ const Index = () => {
         showConstellationLines={showConstellationLines}
         constellationStars={constellationStars}
         onStarClick={handleStarClick}
+        onExoplanetClick={handleExoplanetClick}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">

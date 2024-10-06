@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
 
-const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick }, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -114,6 +114,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         const label = createLabel(exoplanet.exoplanet_name, sphere.position, radius);
         scene.add(label);
         exoplanetsRef.current[exoplanet.exoplanet_name] = { sphere, label };
+        sphere.userData = exoplanet; // Store exoplanet data for raycasting
       });
     };
 
@@ -217,17 +218,28 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
-      const intersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
+      const starIntersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
+      const exoplanetIntersects = raycasterRef.current.intersectObjects(Object.values(exoplanetsRef.current).map(({ sphere }) => sphere));
 
-      if (intersects.length > 0) {
-        const clickedStar = intersects[0].object.userData;
+      if (starIntersects.length > 0) {
+        const clickedStar = starIntersects[0].object.userData;
         onStarClick(clickedStar);
         cameraRef.current.position.set(
-          intersects[0].object.position.x + 20,
-          intersects[0].object.position.y + 20,
-          intersects[0].object.position.z + 20
+          starIntersects[0].object.position.x + 20,
+          starIntersects[0].object.position.y + 20,
+          starIntersects[0].object.position.z + 20
         );
-        controlsRef.current.target.copy(intersects[0].object.position);
+        controlsRef.current.target.copy(starIntersects[0].object.position);
+        controlsRef.current.update();
+      } else if (exoplanetIntersects.length > 0 && showExoplanets) {
+        const clickedExoplanet = exoplanetIntersects[0].object.userData;
+        onExoplanetClick(clickedExoplanet);
+        cameraRef.current.position.set(
+          exoplanetIntersects[0].object.position.x + 20,
+          exoplanetIntersects[0].object.position.y + 20,
+          exoplanetIntersects[0].object.position.z + 20
+        );
+        controlsRef.current.target.copy(exoplanetIntersects[0].object.position);
         controlsRef.current.update();
       }
     };
@@ -243,7 +255,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [initialSkyboxUrl, onStarClick]);
+  }, [initialSkyboxUrl, onStarClick, onExoplanetClick, showExoplanets]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
