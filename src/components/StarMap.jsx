@@ -21,15 +21,16 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     },
     rotateSkybox: (coords) => {
       if (skyboxRef.current) {
-        skyboxRef.current.rotation.x = coords.x * Math.PI / 180;
-        skyboxRef.current.rotation.y = coords.y * Math.PI / 180;
-        skyboxRef.current.rotation.z = coords.z * Math.PI / 180;
+        skyboxRef.current.rotation.set(
+          coords.x * Math.PI / 180,
+          coords.y * Math.PI / 180,
+          coords.z * Math.PI / 180
+        );
       }
     },
     updateSkybox: (url) => {
       if (skyboxRef.current && sceneRef.current) {
-        const loader = new THREE.TextureLoader();
-        loader.load(url, (texture) => {
+        new THREE.TextureLoader().load(url, (texture) => {
           skyboxRef.current.material.map = texture;
           skyboxRef.current.material.needsUpdate = true;
         });
@@ -66,7 +67,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
   }));
 
   useEffect(() => {
-    // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -76,9 +76,8 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Skybox (now a sphere)
-    const loader = new THREE.TextureLoader();
-    loader.load(initialSkyboxUrl, (texture) => {
+    const textureLoader = new THREE.TextureLoader();
+    textureLoader.load(initialSkyboxUrl, (texture) => {
       const skyboxGeometry = new THREE.SphereGeometry(500, 60, 40);
       skyboxGeometry.scale(-1, 1, 1);
       const skyboxMaterial = new THREE.MeshBasicMaterial({ map: texture });
@@ -87,26 +86,12 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
       scene.add(skybox);
     });
 
-    // Camera position
     camera.position.set(0, 0, 0.1);
 
-    // OrbitControls
     const controls = new OrbitControls(camera, renderer.domElement);
     controlsRef.current = controls;
     controls.enableZoom = true;
     controls.enablePan = true;
-
-
-    // Update skybox texture
-    const loader = new THREE.TextureLoader();
-    loader.load('https://imgur.com/VhVRrHk.jpg', (texture) => {
-      const skyboxGeometry = new THREE.SphereGeometry(500, 60, 40);
-      skyboxGeometry.scale(-1, 1, 1);
-      const skyboxMaterial = new THREE.MeshBasicMaterial({ map: texture });
-      const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
-      skyboxRef.current = skybox;
-      scene.add(skybox);
-    });
 
     // Add constellation labels
     const constellations = [
@@ -139,7 +124,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
       labelsRef.current.push(sprite);
     });
 
-    // Animation
     const animate = () => {
       requestAnimationFrame(animate);
       controls.update();
@@ -150,7 +134,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     };
     animate();
 
-    // Resize handler
     const handleResize = () => {
       if (camera && renderer) {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -160,18 +143,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-      }
-      if (controlsRef.current) {
-        controlsRef.current.dispose();
-      }
+      rendererRef.current?.dispose();
+      controlsRef.current?.dispose();
     };
   }, [initialSkyboxUrl]);
 
