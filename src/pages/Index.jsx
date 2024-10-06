@@ -13,12 +13,11 @@ const Index = () => {
   const [showExoplanets, setShowExoplanets] = useState(true);
   const [showStarNames, setShowStarNames] = useState(true);
   const [showConstellationLines, setShowConstellationLines] = useState(true);
+  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
-  const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]); // Set Sky 1 as default
-
+  const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]);
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
-
   const [isDrawMode, setIsDrawMode] = useState(false);
 
   useEffect(() => {
@@ -48,11 +47,6 @@ const Index = () => {
     navigateToCoordinates(coordinates);
   };
 
-  const handleSkyboxChange = (value) => {
-    setSkyboxUrl(value);
-    starMapRef.current?.updateSkybox(value);
-  };
-
   const handleConstellationChange = (constellationName) => {
     const constellation = constellations.find(c => c.name === constellationName);
     if (constellation) {
@@ -60,12 +54,6 @@ const Index = () => {
       setSelectedObjectType('constellation');
       navigateToCoordinates(constellation.coordinates);
     }
-  };
-
-  const handleZoomChange = (value) => {
-    const zoomValue = parseInt(value);
-    setZoom(zoomValue);
-    starMapRef.current?.setZoom(zoomValue);
   };
 
   const handleExoplanetChange = (exoplanetName) => {
@@ -110,7 +98,6 @@ const Index = () => {
     return () => clearInterval(autoplayInterval);
   }, [autoplay]);
 
-
   const getTitle = () => {
     if (!selectedObject) return 'Milky Way Galaxy';
     switch (selectedObjectType) {
@@ -148,12 +135,6 @@ const Index = () => {
       }
     });
   };
-
-  useEffect(() => {
-    starMapRef.current?.updateSkyboxes();
-  }, [activeSkyboxes]);
-
-
 
   const handleSaveImage = () => {
     starMapRef.current?.saveImage();
