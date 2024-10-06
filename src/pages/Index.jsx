@@ -9,12 +9,11 @@ const Index = () => {
   const [autoplay, setAutoplay] = useState(false);
   const [skyboxUrl, setSkyboxUrl] = useState('https://i.imgur.com/VhVRrHk.jpeg');
   const [zoom, setZoom] = useState(35);
-  const [selectedConstellation, setSelectedConstellation] = useState(null);
-  const [selectedExoplanet, setSelectedExoplanet] = useState(null);
+  const [selectedObject, setSelectedObject] = useState(null);
+  const [selectedObjectType, setSelectedObjectType] = useState(null);
   const [showExoplanets, setShowExoplanets] = useState(true);
   const [showStarNames, setShowStarNames] = useState(true);
   const [showConstellationLines, setShowConstellationLines] = useState(true);
-  const [selectedStar, setSelectedStar] = useState(null);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
@@ -41,7 +40,8 @@ const Index = () => {
   const handleConstellationChange = (constellationName) => {
     const constellation = constellations.find(c => c.name === constellationName);
     if (constellation) {
-      setSelectedConstellation(constellation);
+      setSelectedObject(constellation);
+      setSelectedObjectType('constellation');
       navigateToCoordinates(constellation.coordinates);
     }
   };
@@ -55,7 +55,8 @@ const Index = () => {
   const handleExoplanetChange = (exoplanetName) => {
     const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
     if (exoplanet && showExoplanets) {
-      setSelectedExoplanet(exoplanet);
+      setSelectedObject(exoplanet);
+      setSelectedObjectType('exoplanet');
       starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
     } else if (!showExoplanets) {
       console.log("Exoplanets are currently hidden. Please enable them to navigate.");
@@ -65,7 +66,8 @@ const Index = () => {
   const handleConstellationStarChange = (starName) => {
     const star = constellationStars.find(s => s.star_name === starName);
     if (star) {
-      setSelectedStar(star);
+      setSelectedObject(star);
+      setSelectedObjectType('star');
       const coords = {
         x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
         y: Math.sin(star.dec * Math.PI / 180) * 400,
@@ -76,9 +78,8 @@ const Index = () => {
   };
 
   const handleStarClick = (star) => {
-    setSelectedStar(star);
-    setSelectedExoplanet(null);
-    setSelectedConstellation(null);
+    setSelectedObject(star);
+    setSelectedObjectType('star');
     const coords = {
       x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
       y: Math.sin(star.dec * Math.PI / 180) * 400,
@@ -88,9 +89,8 @@ const Index = () => {
   };
 
   const handleExoplanetClick = (exoplanet) => {
-    setSelectedExoplanet(exoplanet);
-    setSelectedStar(null);
-    setSelectedConstellation(null);
+    setSelectedObject(exoplanet);
+    setSelectedObjectType('exoplanet');
     starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
   };
 
@@ -105,17 +105,31 @@ const Index = () => {
   }, [autoplay]);
 
   const getTitle = () => {
-    if (selectedStar) return selectedStar.star_name;
-    if (selectedExoplanet) return selectedExoplanet.exoplanet_name;
-    if (selectedConstellation) return selectedConstellation.name;
-    return 'Milky Way Galaxy';
+    if (!selectedObject) return 'Milky Way Galaxy';
+    switch (selectedObjectType) {
+      case 'star':
+        return selectedObject.star_name;
+      case 'exoplanet':
+        return selectedObject.exoplanet_name;
+      case 'constellation':
+        return selectedObject.name;
+      default:
+        return 'Milky Way Galaxy';
+    }
   };
 
   const getDescription = () => {
-    if (selectedStar) return `Constellation: ${selectedStar.constellation} • Magnitude: ${selectedStar.magnitude}`;
-    if (selectedExoplanet) return `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`;
-    if (selectedConstellation) return `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`;
-    return 'Estimated 100-400 billion stars • 100,000 light years in diameter';
+    if (!selectedObject) return 'Estimated 100-400 billion stars • 100,000 light years in diameter';
+    switch (selectedObjectType) {
+      case 'star':
+        return `Constellation: ${selectedObject.constellation} • Magnitude: ${selectedObject.magnitude}`;
+      case 'exoplanet':
+        return `${selectedObject.host_star} • ${selectedObject.distance_light_years} Light Years from Earth`;
+      case 'constellation':
+        return `${selectedObject.stars} Stars • ${selectedObject.distance} Light Years from Earth`;
+      default:
+        return 'Estimated 100-400 billion stars • 100,000 light years in diameter';
+    }
   };
 
   return (
@@ -155,14 +169,14 @@ const Index = () => {
         exoplanets={exoplanets}
         showExoplanets={showExoplanets}
         setShowExoplanets={setShowExoplanets}
-        selectedConstellation={selectedConstellation}
+        selectedConstellation={selectedObjectType === 'constellation' ? selectedObject : null}
         handleConstellationStarChange={handleConstellationStarChange}
         showStarNames={showStarNames}
         setShowStarNames={setShowStarNames}
         showConstellationLines={showConstellationLines}
         setShowConstellationLines={setShowConstellationLines}
-        selectedExoplanet={selectedExoplanet}
-        selectedStar={selectedStar}
+        selectedExoplanet={selectedObjectType === 'exoplanet' ? selectedObject : null}
+        selectedStar={selectedObjectType === 'star' ? selectedObject : null}
         constellationStars={constellationStars}
       />
     </div>
