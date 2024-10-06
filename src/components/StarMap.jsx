@@ -89,9 +89,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    // Add exoplanets to the scene
-    exoplanetObjects.forEach(obj => sceneRef.current.add(obj));
-    exoplanetLabels.forEach(label => sceneRef.current.add(label));
+    // Add exoplanets, stars, and constellation lines to the scene
+    exoplanetObjects.forEach(obj => scene.add(obj));
+    exoplanetLabels.forEach(label => scene.add(label));
     exoplanetsRef.current = exoplanetObjects.reduce((acc, obj, index) => {
       acc[exoplanets[index].exoplanet_name] = { sphere: obj, label: exoplanetLabels[index] };
       return acc;
@@ -108,6 +108,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     constellationLinesRef.current = createConstellationLines(constellations, starsRef.current);
     constellationLinesRef.current.forEach(line => scene.add(line));
 
+    // Add lights
     scene.add(new THREE.AmbientLight(0x404040));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(1, 1, 1);
@@ -135,35 +136,35 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   };
 
   const handleClick = (event) => {
-      event.preventDefault();
-      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    event.preventDefault();
+    mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
-      const starIntersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
-      const exoplanetIntersects = raycasterRef.current.intersectObjects(Object.values(exoplanetsRef.current).map(({ sphere }) => sphere));
+    raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+    const starIntersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
+    const exoplanetIntersects = raycasterRef.current.intersectObjects(Object.values(exoplanetsRef.current).map(({ sphere }) => sphere));
 
-      if (starIntersects.length > 0) {
-        const clickedStar = starIntersects[0].object.userData;
-        onStarClick(clickedStar);
-        cameraRef.current.position.set(
-          starIntersects[0].object.position.x + 20,
-          starIntersects[0].object.position.y + 20,
-          starIntersects[0].object.position.z + 20
-        );
-        controlsRef.current.target.copy(starIntersects[0].object.position);
-        controlsRef.current.update();
-      } else if (exoplanetIntersects.length > 0 && showExoplanets) {
-        const clickedExoplanet = exoplanetIntersects[0].object.userData;
-        onExoplanetClick(clickedExoplanet);
-        cameraRef.current.position.set(
-          exoplanetIntersects[0].object.position.x + 50,
-          exoplanetIntersects[0].object.position.y + 50,
-          exoplanetIntersects[0].object.position.z + 50
-        );
-        controlsRef.current.target.copy(exoplanetIntersects[0].object.position);
-        controlsRef.current.update();
-      }
+    if (starIntersects.length > 0) {
+      const clickedStar = starIntersects[0].object.userData;
+      onStarClick(clickedStar);
+      cameraRef.current.position.set(
+        starIntersects[0].object.position.x + 20,
+        starIntersects[0].object.position.y + 20,
+        starIntersects[0].object.position.z + 20
+      );
+      controlsRef.current.target.copy(starIntersects[0].object.position);
+      controlsRef.current.update();
+    } else if (exoplanetIntersects.length > 0 && showExoplanets) {
+      const clickedExoplanet = exoplanetIntersects[0].object.userData;
+      onExoplanetClick(clickedExoplanet);
+      cameraRef.current.position.set(
+        exoplanetIntersects[0].object.position.x + 50,
+        exoplanetIntersects[0].object.position.y + 50,
+        exoplanetIntersects[0].object.position.z + 50
+      );
+      controlsRef.current.target.copy(exoplanetIntersects[0].object.position);
+      controlsRef.current.update();
+    }
   };
 
   useEffect(() => {
