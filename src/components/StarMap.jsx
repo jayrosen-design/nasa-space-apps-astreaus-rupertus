@@ -82,6 +82,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         sceneRef.current.add(skybox);
       }
     },
+    setZoom: (zoomLevel) => {
+      if (cameraRef.current && controlsRef.current) {
+        const distance = 500 / Math.pow(2, zoomLevel / 10);
+        cameraRef.current.position.setLength(distance);
+        controlsRef.current.update();
+      }
+    },
   }));
 
   const setupScene = useCallback(() => {

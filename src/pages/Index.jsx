@@ -46,6 +46,7 @@ const Index = () => {
     }
   };
 
+
   const handleZoomChange = (value) => {
     const zoomValue = parseInt(value);
     setZoom(zoomValue);
