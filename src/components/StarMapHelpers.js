@@ -9,25 +9,43 @@ export const createSkybox = (url) => {
   return new THREE.Mesh(skyboxGeometry, skyboxMaterial);
 };
 
+export const createLabel = (text, position, offset) => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  context.font = 'Bold 32px Arial';
+  context.fillStyle = 'rgba(255,255,255,0.95)';
+  context.textAlign = 'center';
+  context.fillText(text, canvas.width / 2, 32);
+  
+  const texture = new THREE.CanvasTexture(canvas);
+  const spriteMaterial = new THREE.SpriteMaterial({
+    map: texture,
+    transparent: true,
+  });
+  const sprite = new THREE.Sprite(spriteMaterial);
+  sprite.position.set(position.x, position.y + offset + 2, position.z);
+  sprite.scale.set(20, 10, 1);
+  return sprite;
+};
+
 export const createExoplanets = (exoplanets) => {
   const exoplanetObjects = [];
   const exoplanetLabels = [];
 
   exoplanets.forEach((exoplanet) => {
-    const radius = Math.random() * 5 + 2; // Random size between 2 and 7
+    const radius = Math.random() * 5 + 2;
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const material = new THREE.MeshPhongMaterial({
-      color: new THREE.Color(Math.random(), Math.random(), Math.random()), // Random color
+      color: new THREE.Color(Math.random(), Math.random(), Math.random()),
       emissive: 0x111111,
       specular: 0x333333,
       shininess: 30
     });
     const sphere = new THREE.Mesh(geometry, material);
     
-    // Random position within a sphere
     const phi = Math.acos(2 * Math.random() - 1);
     const theta = 2 * Math.PI * Math.random();
-    const distance = Math.random() * 300 + 100; // Random distance between 100 and 400
+    const distance = Math.random() * 300 + 100;
     sphere.position.set(
       distance * Math.sin(phi) * Math.cos(theta),
       distance * Math.sin(phi) * Math.sin(theta),
@@ -90,18 +108,4 @@ export const createConstellationLines = (constellations, starsRef) => {
     }
   });
   return lines;
-};
-
-const createLabel = (text, position, offset) => {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  context.font = 'Bold 20px Arial';
-  context.fillStyle = 'rgba(255,255,255,0.95)';
-  context.fillText(text, 0, 20);
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-  const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(position.x, position.y + offset + 5, position.z);
-  sprite.scale.set(40, 20, 1);
-  return sprite;
 };

@@ -2,9 +2,9 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, use
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
-import { createExoplanets, createConstellationStars, createConstellationLines } from './StarMapHelpers';
+import { createExoplanets, createConstellationStars, createConstellationLines, createLabel } from './StarMapHelpers';
 
-const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -45,12 +45,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   const updateSkyboxes = useCallback(() => {
     if (sceneRef.current) {
-      // Remove existing skyboxes
       Object.values(skyboxesRef.current).forEach(skybox => {
         sceneRef.current.remove(skybox);
       });
-
-      // Add active skyboxes
       activeSkyboxes.forEach(skyboxOption => {
         const skybox = createSkybox(skyboxOption.value, skyboxOption.layer === 'overlay' ? 0.5 : 1);
         skyboxesRef.current[skyboxOption.label] = skybox;
@@ -62,7 +59,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   const navigateToExoplanet = useCallback((exoplanetName) => {
     const exoplanet = exoplanetsRef.current[exoplanetName];
     if (exoplanet) {
-      zoomToObject(exoplanet.sphere.position, exoplanet.sphere.geometry.parameters.radius);
+      zoomToObject(exoplanet.sphere.position, exoplanet.sphere.geometry.parameters.radius * 3);
     }
   }, [zoomToObject]);
 
@@ -78,7 +75,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         });
       }
     },
-    updateSkyboxes: updateSkyboxes,
+    updateSkyboxes,
     updateSkybox: (url) => {
       if (sceneRef.current) {
         const skybox = createSkybox(url);
@@ -104,7 +101,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     cameraRef.current = camera;
-    const renderer = new THREE.WebGLRenderer();
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
@@ -140,7 +137,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     scene.add(directionalLight);
 
     updateSkyboxes();
-  }, [initialSkyboxUrl, exoplanetObjects, exoplanetLabels, updateSkyboxes]);
+  }, [exoplanetObjects, exoplanetLabels, updateSkyboxes]);
 
   const animate = useCallback(() => {
     requestAnimationFrame(animate);
