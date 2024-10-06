@@ -49,6 +49,8 @@ export const skyboxOptions = [
   { label: 'Sky 2', value: 'https://i.imgur.com/SNyB8xA.jpeg', layer: 'background' },
   { label: 'Constellations', value: 'https://i.imgur.com/JBn3avO.png', layer: 'overlay' },
   { label: 'Zones', value: 'https://i.imgur.com/P2iVDAa.png', layer: 'overlay' },
+  { label: 'Kepler-37d', value: 'https://i.imgur.com/r6PKh93.png', layer: 'background' },
+  { label: 'Paint Constellation Mode', value: 'https://i.imgur.com/ZabuisW.png', layer: 'background' },
 ];
 
 export const constellationStars = [
