@@ -12,7 +12,7 @@ const Index = () => {
   const starMapRef = useRef(null);
 
   const skyboxOptions = [
-    { label: 'Galaxy Texture', value: 'https://opengameart.org/sites/default/files/GalaxyTex_NegativeX.png' },
+    { label: 'Galaxy Texture', value: 'https://jayrosen.design/nasa/GalaxyTex_NegativeX.png' },
     { label: 'Space', value: 'https://jayrosen.design/nasa/skybox-space.jpg' },
   ];
 
