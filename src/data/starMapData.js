@@ -45,7 +45,8 @@ export const exoplanets = [
 ];
 
 export const skyboxOptions = [
-  { label: 'Milky Way', value: 'https://i.imgur.com/SNyB8xA.jpeg', layer: 'background' },
+  { label: 'Sky 1', value: 'https://i.imgur.com/mQmvqEp.jpeg', layer: 'background' },
+  { label: 'Sky 2', value: 'https://i.imgur.com/SNyB8xA.jpeg', layer: 'background' },
   { label: 'Constellations', value: 'https://i.imgur.com/JBn3avO.png', layer: 'overlay' },
   { label: 'Zones', value: 'https://i.imgur.com/P2iVDAa.png', layer: 'overlay' },
 ];

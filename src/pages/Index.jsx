@@ -14,7 +14,7 @@ const Index = () => {
   const [showConstellationLines, setShowConstellationLines] = useState(true);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
-  const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]);
+  const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]); // Set Sky 1 as default
 
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
 
