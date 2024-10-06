@@ -22,7 +22,11 @@ const ControlPanel = ({
   skyboxOptions,
   constellations,
   zoomOptions,
-  exoplanets
+  exoplanets,
+  showExoplanets,
+  setShowExoplanets,
+  selectedConstellation,
+  handleConstellationStarChange,
 }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
@@ -55,6 +59,7 @@ const ControlPanel = ({
           <Button type="submit">Navigate</Button>
         </div>
         <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="autoplay"
@@ -81,7 +86,21 @@ const ControlPanel = ({
               Dark Mode
             </label>
           </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="show-exoplanets"
+              checked={showExoplanets}
+              onCheckedChange={setShowExoplanets}
+            />
+            <label
+              htmlFor="show-exoplanets"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show Exoplanets
+            </label>
+          </div>
         </div>
+        <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-2">
           <Select onValueChange={handleSkyboxChange} defaultValue={skyboxUrl}>
             <SelectTrigger className="w-[180px]">
@@ -127,6 +146,18 @@ const ControlPanel = ({
               {exoplanets.map((exoplanet) => (
                 <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
                   {exoplanet.exoplanet_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select onValueChange={handleConstellationStarChange} value={selectedConstellation}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Constellation Star" />
+            </SelectTrigger>
+            <SelectContent>
+              {constellations.map((constellation) => (
+                <SelectItem key={constellation.name} value={constellation.name}>
+                  {constellation.name}
                 </SelectItem>
               ))}
             </SelectContent>

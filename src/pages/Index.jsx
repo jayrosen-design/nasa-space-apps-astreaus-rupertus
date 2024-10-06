@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
-import { constellations, zoomOptions, exoplanets, skyboxOptions } from '../data/starMapData';
+import { constellations, zoomOptions, exoplanets, skyboxOptions, constellationStars } from '../data/starMapData';
 import ControlPanel from '../components/ControlPanel';
 import ExoplanetInfo from '../components/ExoplanetInfo';
 import { useTheme } from 'next-themes';
@@ -12,6 +12,7 @@ const Index = () => {
   const [zoom, setZoom] = useState(35);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedExoplanet, setSelectedExoplanet] = useState(null);
+  const [showExoplanets, setShowExoplanets] = useState(true);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
@@ -62,6 +63,20 @@ const Index = () => {
     }
   };
 
+  const handleConstellationStarChange = (constellationName) => {
+    setSelectedConstellation(constellationName);
+    const stars = constellationStars.filter(star => star.constellation === constellationName);
+    if (stars.length > 0) {
+      const firstStar = stars[0];
+      const coords = {
+        x: Math.cos(firstStar.ra * Math.PI / 180) * Math.cos(firstStar.dec * Math.PI / 180) * 400,
+        y: Math.sin(firstStar.dec * Math.PI / 180) * 400,
+        z: Math.sin(firstStar.ra * Math.PI / 180) * Math.cos(firstStar.dec * Math.PI / 180) * 400
+      };
+      navigateToCoordinates(coords);
+    }
+  };
+
   useEffect(() => {
     let autoplayInterval;
     if (autoplay) {
@@ -76,7 +91,12 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
-      <StarMap ref={starMapRef} initialSkyboxUrl={skyboxUrl} />
+      <StarMap 
+        ref={starMapRef} 
+        initialSkyboxUrl={skyboxUrl} 
+        showExoplanets={showExoplanets}
+        constellationStars={constellationStars}
+      />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">
           {selectedExoplanet ? selectedExoplanet.exoplanet_name : (selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy')}
@@ -107,6 +127,10 @@ const Index = () => {
         constellations={constellations}
         zoomOptions={zoomOptions}
         exoplanets={exoplanets}
+        showExoplanets={showExoplanets}
+        setShowExoplanets={setShowExoplanets}
+        selectedConstellation={selectedConstellation}
+        handleConstellationStarChange={handleConstellationStarChange}
       />
       {selectedExoplanet && <ExoplanetInfo exoplanet={selectedExoplanet} />}
     </div>

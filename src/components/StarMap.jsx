@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { exoplanets } from '../data/starMapData';
+import { exoplanets, constellationStars } from '../data/starMapData';
 
-const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -12,6 +12,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
   const skyboxRef = useRef(null);
   const labelsRef = useRef([]);
   const exoplanetsRef = useRef({});
+  const constellationStarsRef = useRef({});
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -81,43 +82,85 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     controls.enablePan = true;
 
     // Add exoplanets to the scene
-    exoplanets.forEach((exoplanet, index) => {
-      const radius = 5 + Math.random() * 5; // Random size between 5 and 10
-      const geometry = new THREE.SphereGeometry(radius, 32, 32);
-      const material = new THREE.MeshPhongMaterial({
-        color: Math.random() * 0xffffff,
-        emissive: 0x111111,
-        specular: 0x333333,
-        shininess: 30
-      });
-      const sphere = new THREE.Mesh(geometry, material);
-      
-      // Position planets in a spiral
-      const angle = index * 0.5;
-      const distance = 50 + index * 20;
-      sphere.position.set(
-        Math.cos(angle) * distance,
-        Math.sin(angle) * distance,
-        (Math.random() - 0.5) * 100
-      );
-      
-      scene.add(sphere);
-      exoplanetsRef.current[exoplanet.exoplanet_name] = sphere;
+    const addExoplanets = () => {
+      exoplanets.forEach((exoplanet, index) => {
+        const radius = 5 + Math.random() * 5; // Random size between 5 and 10
+        const geometry = new THREE.SphereGeometry(radius, 32, 32);
+        const material = new THREE.MeshPhongMaterial({
+          color: Math.random() * 0xffffff,
+          emissive: 0x111111,
+          specular: 0x333333,
+          shininess: 30
+        });
+        const sphere = new THREE.Mesh(geometry, material);
+        
+        // Position planets in a spiral
+        const angle = index * 0.5;
+        const distance = 50 + index * 20;
+        sphere.position.set(
+          Math.cos(angle) * distance,
+          Math.sin(angle) * distance,
+          (Math.random() - 0.5) * 100
+        );
+        
+        scene.add(sphere);
+        exoplanetsRef.current[exoplanet.exoplanet_name] = sphere;
 
-      // Add planet name label
-      const canvas = document.createElement('canvas');
-      const context = canvas.getContext('2d');
-      context.font = 'Bold 20px Arial';
-      context.fillStyle = 'rgba(255,255,255,0.95)';
-      context.fillText(exoplanet.exoplanet_name, 0, 20);
-      const texture = new THREE.CanvasTexture(canvas);
-      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-      const sprite = new THREE.Sprite(spriteMaterial);
-      sprite.position.set(sphere.position.x, sphere.position.y + radius + 5, sphere.position.z);
-      sprite.scale.set(40, 20, 1);
-      scene.add(sprite);
-      labelsRef.current.push(sprite);
-    });
+        // Add planet name label
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = 'Bold 20px Arial';
+        context.fillStyle = 'rgba(255,255,255,0.95)';
+        context.fillText(exoplanet.exoplanet_name, 0, 20);
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.position.set(sphere.position.x, sphere.position.y + radius + 5, sphere.position.z);
+        sprite.scale.set(40, 20, 1);
+        scene.add(sprite);
+        labelsRef.current.push(sprite);
+      });
+    };
+
+    // Add constellation stars to the scene
+    const addConstellationStars = () => {
+      constellationStars.forEach((star) => {
+        const geometry = new THREE.SphereGeometry(2, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const sphere = new THREE.Mesh(geometry, material);
+        
+        // Convert RA and Dec to x, y, z coordinates
+        const phi = (90 - star.dec) * (Math.PI / 180);
+        const theta = star.ra * (Math.PI / 180);
+        const radius = 400; // Adjust this value to position stars
+        
+        sphere.position.set(
+          radius * Math.sin(phi) * Math.cos(theta),
+          radius * Math.cos(phi),
+          radius * Math.sin(phi) * Math.sin(theta)
+        );
+        
+        scene.add(sphere);
+        constellationStarsRef.current[star.star_name] = sphere;
+
+        // Add star name label
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = 'Bold 20px Arial';
+        context.fillStyle = 'rgba(255,255,255,0.95)';
+        context.fillText(star.star_name, 0, 20);
+        const texture = new THREE.CanvasTexture(canvas);
+        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+        const sprite = new THREE.Sprite(spriteMaterial);
+        sprite.position.set(sphere.position.x, sphere.position.y + 3, sphere.position.z);
+        sprite.scale.set(20, 10, 1);
+        scene.add(sprite);
+        labelsRef.current.push(sprite);
+      });
+    };
+
+    addExoplanets();
+    addConstellationStars();
 
     // Add ambient light
     const ambientLight = new THREE.AmbientLight(0x404040);
@@ -150,33 +193,15 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Add click event listener for planet selection
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-
-    const onMouseClick = (event) => {
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycaster.setFromCamera(mouse, camera);
-      const intersects = raycaster.intersectObjects(Object.values(exoplanetsRef.current));
-
-      if (intersects.length > 0) {
-        const selectedPlanet = intersects[0].object;
-        const planetName = Object.keys(exoplanetsRef.current).find(
-          key => exoplanetsRef.current[key] === selectedPlanet
-        );
-        if (planetName) {
-          ref.current.navigateToExoplanet(planetName);
-        }
-      }
-    };
-
-    window.addEventListener('click', onMouseClick);
+    // Update exoplanet visibility
+    useEffect(() => {
+      Object.values(exoplanetsRef.current).forEach((exoplanet) => {
+        exoplanet.visible = showExoplanets;
+      });
+    }, [showExoplanets]);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('click', onMouseClick);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
