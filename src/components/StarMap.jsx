@@ -61,9 +61,8 @@ const StarMap = forwardRef((props, ref) => {
     controls.enablePan = true;
 
     // Animation
-    let animationFrameId;
     const animate = () => {
-      animationFrameId = requestAnimationFrame(animate);
+      requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
     };
@@ -82,7 +81,6 @@ const StarMap = forwardRef((props, ref) => {
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
-      cancelAnimationFrame(animationFrameId);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
