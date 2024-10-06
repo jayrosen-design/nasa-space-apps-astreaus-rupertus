@@ -32,165 +32,70 @@ const ControlPanel = ({
   showConstellationLines,
   setShowConstellationLines,
 }) => {
+  const renderCheckbox = (id, checked, onChange, label) => (
+    <div className="flex items-center space-x-2">
+      <Checkbox id={id} checked={checked} onCheckedChange={onChange} />
+      <label htmlFor={id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+        {label}
+      </label>
+    </div>
+  );
+
+  const renderSelect = (onValueChange, defaultValue, placeholder, options, valueKey, labelKey) => (
+    <Select onValueChange={onValueChange} defaultValue={defaultValue}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((option) => (
+          <SelectItem key={option[valueKey]} value={option[valueKey]}>
+            {option[labelKey]}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+
   return (
     <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
       <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
         <div className="flex space-x-2 justify-center">
-          <Input
-            type="number"
-            name="x"
-            value={coordinates.x}
-            onChange={handleInputChange}
-            placeholder="X"
-            className="w-20"
-          />
-          <Input
-            type="number"
-            name="y"
-            value={coordinates.y}
-            onChange={handleInputChange}
-            placeholder="Y"
-            className="w-20"
-          />
-          <Input
-            type="number"
-            name="z"
-            value={coordinates.z}
-            onChange={handleInputChange}
-            placeholder="Z"
-            className="w-20"
-          />
+          {['x', 'y', 'z'].map((axis) => (
+            <Input
+              key={axis}
+              type="number"
+              name={axis}
+              value={coordinates[axis]}
+              onChange={handleInputChange}
+              placeholder={axis.toUpperCase()}
+              className="w-20"
+            />
+          ))}
           <Button type="submit">Navigate</Button>
         </div>
-        <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="autoplay"
-              checked={autoplay}
-              onCheckedChange={setAutoplay}
-            />
-            <label
-              htmlFor="autoplay"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Autoplay
-            </label>
-          </div>
+        <div className="flex items-center space-x-4 flex-wrap">
+          {renderCheckbox("autoplay", autoplay, setAutoplay, "Autoplay")}
           <div className="flex items-center space-x-2">
             <Switch
               id="dark-mode"
               checked={theme === 'dark'}
               onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             />
-            <label
-              htmlFor="dark-mode"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
+            <label htmlFor="dark-mode" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Dark Mode
             </label>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="show-exoplanets"
-              checked={showExoplanets}
-              onCheckedChange={setShowExoplanets}
-            />
-            <label
-              htmlFor="show-exoplanets"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Show Exoplanets
-            </label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="show-star-names"
-              checked={showStarNames}
-              onCheckedChange={setShowStarNames}
-            />
-            <label
-              htmlFor="show-star-names"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Show Star Names
-            </label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="show-constellation-lines"
-              checked={showConstellationLines}
-              onCheckedChange={setShowConstellationLines}
-            />
-            <label
-              htmlFor="show-constellation-lines"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Show Constellation Lines
-            </label>
-          </div>
+          {renderCheckbox("show-exoplanets", showExoplanets, setShowExoplanets, "Show Exoplanets")}
+          {renderCheckbox("show-star-names", showStarNames, setShowStarNames, "Show Star Names")}
+          {renderCheckbox("show-constellation-lines", showConstellationLines, setShowConstellationLines, "Show Constellation Lines")}
         </div>
-        <div className="flex items-center space-x-2">
-          <Select onValueChange={handleSkyboxChange} defaultValue={skyboxUrl}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Skybox" />
-            </SelectTrigger>
-            <SelectContent>
-              {skyboxOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select onValueChange={handleConstellationChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Constellation" />
-            </SelectTrigger>
-            <SelectContent>
-              {constellations.map((constellation) => (
-                <SelectItem key={constellation.name} value={constellation.name}>
-                  {constellation.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select onValueChange={handleZoomChange} defaultValue={zoom}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Zoom" />
-            </SelectTrigger>
-            <SelectContent>
-              {zoomOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select onValueChange={handleExoplanetChange}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Exoplanet" />
-            </SelectTrigger>
-            <SelectContent>
-              {exoplanets.map((exoplanet) => (
-                <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
-                  {exoplanet.exoplanet_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select onValueChange={handleConstellationStarChange} value={selectedConstellation}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Constellation Star" />
-            </SelectTrigger>
-            <SelectContent>
-              {constellations.map((constellation) => (
-                <SelectItem key={constellation.name} value={constellation.name}>
-                  {constellation.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center space-x-2 flex-wrap">
+          {renderSelect(handleSkyboxChange, skyboxUrl, "Select Skybox", skyboxOptions, "value", "label")}
+          {renderSelect(handleConstellationChange, null, "Select Constellation", constellations, "name", "name")}
+          {renderSelect(handleZoomChange, zoom, "Select Zoom", zoomOptions, "value", "label")}
+          {renderSelect(handleExoplanetChange, null, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
+          {renderSelect(handleConstellationStarChange, selectedConstellation, "Select Constellation Star", constellations, "name", "name")}
+        </div>
       </form>
     </div>
   );
