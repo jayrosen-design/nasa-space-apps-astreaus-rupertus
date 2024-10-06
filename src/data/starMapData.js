@@ -29,7 +29,19 @@ export const zoomOptions = [
 export const exoplanets = [
   { exoplanet_name: 'Proxima Centauri b', host_star: 'Proxima Centauri', distance_light_years: 4.24, planet_type: 'Rocky' },
   { exoplanet_name: 'TRAPPIST-1e', host_star: 'TRAPPIST-1', distance_light_years: 39.5, planet_type: 'Rocky' },
-  // ... add the rest of the exoplanets data here
+  { exoplanet_name: 'Kepler-186f', host_star: 'Kepler-186', distance_light_years: 582, planet_type: 'Rocky' },
+  { exoplanet_name: 'HD 219134 b', host_star: 'HD 219134', distance_light_years: 21, planet_type: 'Rocky' },
+  { exoplanet_name: 'Kepler-442b', host_star: 'Kepler-442', distance_light_years: 1206, planet_type: 'Rocky' },
+  { exoplanet_name: 'Wolf 1061c', host_star: 'Wolf 1061', distance_light_years: 13.8, planet_type: 'Rocky' },
+  { exoplanet_name: 'Kepler-22b', host_star: 'Kepler-22', distance_light_years: 638, planet_type: 'Super-Earth/Mini-Neptune' },
+  { exoplanet_name: 'Kepler-452b', host_star: 'Kepler-452', distance_light_years: 1402, planet_type: 'Super-Earth' },
+  { exoplanet_name: 'Tau Ceti e', host_star: 'Tau Ceti', distance_light_years: 11.9, planet_type: 'Super-Earth' },
+  { exoplanet_name: 'Gliese 667 Cc', host_star: 'Gliese 667 C', distance_light_years: 23.62, planet_type: 'Super-Earth' },
+  { exoplanet_name: 'HD 40307 g', host_star: 'HD 40307', distance_light_years: 42, planet_type: 'Super-Earth' },
+  { exoplanet_name: 'Kepler-62f', host_star: 'Kepler-62', distance_light_years: 1200, planet_type: 'Super-Earth' },
+  { exoplanet_name: 'Kepler-1649c', host_star: 'Kepler-1649', distance_light_years: 301, planet_type: 'Rocky' },
+  { exoplanet_name: 'TOI 700 d', host_star: 'TOI 700', distance_light_years: 101.4, planet_type: 'Rocky' },
+  { exoplanet_name: 'K2-18b', host_star: 'K2-18', distance_light_years: 124, planet_type: 'Super-Earth' },
 ];
 
 export const skyboxOptions = [
