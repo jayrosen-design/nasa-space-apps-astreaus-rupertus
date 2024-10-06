@@ -12,7 +12,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
   const skyboxRef = useRef(null);
   const labelsRef = useRef([]);
   const exoplanetsRef = useRef({});
-  const constellationStarsRef = useRef({});
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -81,7 +80,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    // Add exoplanets to the scene
     const addExoplanets = () => {
       exoplanets.forEach((exoplanet, index) => {
         const radius = 5 + Math.random() * 5; // Random size between 5 and 10
@@ -107,22 +105,26 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
         exoplanetsRef.current[exoplanet.exoplanet_name] = sphere;
 
         // Add planet name label
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        context.font = 'Bold 20px Arial';
-        context.fillStyle = 'rgba(255,255,255,0.95)';
-        context.fillText(exoplanet.exoplanet_name, 0, 20);
-        const texture = new THREE.CanvasTexture(canvas);
-        const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-        const sprite = new THREE.Sprite(spriteMaterial);
-        sprite.position.set(sphere.position.x, sphere.position.y + radius + 5, sphere.position.z);
-        sprite.scale.set(40, 20, 1);
-        scene.add(sprite);
-        labelsRef.current.push(sprite);
+        const label = createLabel(exoplanet.exoplanet_name, sphere.position, radius);
+        scene.add(label);
+        exoplanetsRef.current[exoplanet.exoplanet_name] = { sphere, label };
       });
     };
 
-    // Add constellation stars to the scene
+    const createLabel = (text, position, offset) => {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      context.font = 'Bold 20px Arial';
+      context.fillStyle = 'rgba(255,255,255,0.95)';
+      context.fillText(text, 0, 20);
+      const texture = new THREE.CanvasTexture(canvas);
+      const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+      const sprite = new THREE.Sprite(spriteMaterial);
+      sprite.position.set(position.x, position.y + offset + 5, position.z);
+      sprite.scale.set(40, 20, 1);
+      return sprite;
+    };
+
     const addConstellationStars = () => {
       constellationStars.forEach((star) => {
         const geometry = new THREE.SphereGeometry(2, 32, 32);
@@ -141,7 +143,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
         );
         
         scene.add(sphere);
-        constellationStarsRef.current[star.star_name] = sphere;
 
         // Add star name label
         const canvas = document.createElement('canvas');
@@ -155,7 +156,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
         sprite.position.set(sphere.position.x, sphere.position.y + 3, sphere.position.z);
         sprite.scale.set(20, 10, 1);
         scene.add(sprite);
-        labelsRef.current.push(sprite);
       });
     };
 
@@ -177,7 +177,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
       if (skyboxRef.current) {
         skyboxRef.current.rotation.y += 0.0001; // Slow rotation around y-axis
       }
-      labelsRef.current.forEach(label => {
+      Object.values(exoplanetsRef.current).forEach(({ label }) => {
         label.quaternion.copy(camera.quaternion);
       });
       renderer.render(scene, camera);
@@ -205,8 +205,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
 
   // Update exoplanet visibility
   useEffect(() => {
-    Object.values(exoplanetsRef.current).forEach((exoplanet) => {
-      exoplanet.visible = showExoplanets;
+    Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
+      sphere.visible = showExoplanets;
+      label.visible = showExoplanets;
     });
   }, [showExoplanets]);
 

@@ -51,15 +51,16 @@ const Index = () => {
 
   const handleExoplanetChange = (exoplanetName) => {
     const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
-    if (exoplanet) {
+    if (exoplanet && showExoplanets) {
       setSelectedExoplanet(exoplanet);
       const coords = {
         x: Math.random() * 1000 - 500,
         y: Math.random() * 1000 - 500,
         z: Math.random() * 1000 - 500
       };
-      starMapRef.current?.addExoplanet(exoplanet.exoplanet_name, coords);
       starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
+    } else if (!showExoplanets) {
+      console.log("Exoplanets are currently hidden. Please enable them to navigate.");
     }
   };
 
