@@ -16,6 +16,12 @@ const Index = () => {
   const { theme, setTheme } = useTheme();
   const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]);
 
+  const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
+
+  const toggleControlPanelVisibility = () => {
+    setIsControlPanelVisible(prev => !prev);
+  };
+
   const navigateToCoordinates = (coords) => {
     setCoordinates(coords);
     starMapRef.current?.navigateToCoordinates(coords);
@@ -179,6 +185,8 @@ const Index = () => {
         constellationStars={constellationStars}
         activeSkyboxes={activeSkyboxes}
         handleSkyboxToggle={handleSkyboxToggle}
+        isVisible={isControlPanelVisible}
+        toggleVisibility={toggleControlPanelVisibility}
       />
     </div>
   );

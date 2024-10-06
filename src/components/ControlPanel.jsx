@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Menu } from 'lucide-react';
 
 const renderCheckbox = (id, checked, onChange, label) => (
   <div className="flex items-center space-x-2">
@@ -59,9 +60,20 @@ const ControlPanel = ({
   constellationStars,
   activeSkyboxes,
   handleSkyboxToggle,
+  isVisible,
+  toggleVisibility,
 }) => (
-  <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
-    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+  <div className={`fixed bottom-0 left-0 right-0 bg-background shadow transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
+    <Button
+      className="absolute -top-10 left-4 p-2"
+      variant="outline"
+      onClick={toggleVisibility}
+      aria-label="Toggle control panel"
+    >
+      <Menu className="h-6 w-6" />
+    </Button>
+    <div className="p-4">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
       <div className="flex flex-wrap gap-2 justify-center">
         {['x', 'y', 'z'].map((axis) => (
           <Input
@@ -124,7 +136,8 @@ const ControlPanel = ({
           ))}
         </div>
       </div>
-    </form>
+      </form>
+    </div>
   </div>
 );
 
