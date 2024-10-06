@@ -78,6 +78,9 @@ const ControlPanel = ({
   toggleVisibility,
   isBackgroundMusicPlaying,
   setIsBackgroundMusicPlaying,
+  isDrawMode,
+  setIsDrawMode,
+  handleSaveImage,
 }) => (
   <div className={`fixed bottom-0 left-0 right-0 bg-background shadow transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
     <Button
@@ -179,6 +182,25 @@ const ControlPanel = ({
           </div>
         </div>
       </form>
+      <div className="flex justify-center space-x-4 mt-4">
+        <Button
+          onClick={() => {
+            playClickSound();
+            setIsDrawMode(!isDrawMode);
+          }}
+          variant={isDrawMode ? "secondary" : "outline"}
+        >
+          {isDrawMode ? "Stop Drawing" : "Draw Constellation"}
+        </Button>
+        <Button
+          onClick={() => {
+            playClickSound();
+            handleSaveImage();
+          }}
+        >
+          Save Image
+        </Button>
+      </div>
     </div>
   </div>
 );

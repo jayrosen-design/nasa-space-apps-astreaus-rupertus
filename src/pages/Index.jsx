@@ -19,8 +19,7 @@ const Index = () => {
 
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
 
-
-  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
+  const [isDrawMode, setIsDrawMode] = useState(false);
 
   useEffect(() => {
     if (isBackgroundMusicPlaying) {
@@ -155,6 +154,11 @@ const Index = () => {
   }, [activeSkyboxes]);
 
 
+
+  const handleSaveImage = () => {
+    starMapRef.current?.saveImage();
+  };
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap 
@@ -167,6 +171,7 @@ const Index = () => {
         onExoplanetClick={handleExoplanetClick}
         autoplay={autoplay}
         activeSkyboxes={activeSkyboxes}
+        isDrawMode={isDrawMode}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-2">{getTitle()}</h1>
@@ -202,6 +207,9 @@ const Index = () => {
         toggleVisibility={toggleControlPanelVisibility}
         isBackgroundMusicPlaying={isBackgroundMusicPlaying}
         setIsBackgroundMusicPlaying={setIsBackgroundMusicPlaying}
+        isDrawMode={isDrawMode}
+        setIsDrawMode={setIsDrawMode}
+        handleSaveImage={handleSaveImage}
       />
     </div>
   );

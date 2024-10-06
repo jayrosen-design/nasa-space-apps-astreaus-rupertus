@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
 import { createExoplanets, createConstellationStars, createConstellationLines, createLabel } from './StarMapHelpers';
 
-const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes, isDrawMode }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -100,6 +100,13 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
         zoomToObject(star.sphere.position, star.sphere.geometry.parameters.radius * 3);
       }
     },
+    saveImage: () => {
+      const canvas = rendererRef.current.domElement;
+      const link = document.createElement('a');
+      link.download = 'star-map.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    },
   }));
 
   const setupScene = useCallback(() => {
@@ -159,43 +166,71 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     rendererRef.current.render(sceneRef.current, cameraRef.current);
   }, [autoplay]);
 
-  const handleClick = useCallback((event) => {
-    event.preventDefault();
-    mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
-    const starIntersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
-    const exoplanetIntersects = raycasterRef.current.intersectObjects(Object.values(exoplanetsRef.current).map(({ sphere }) => sphere));
-
-    if (starIntersects.length > 0) {
-      const clickedStar = starIntersects[0].object.userData;
-      onStarClick(clickedStar);
-      zoomToObject(starIntersects[0].object.position, starIntersects[0].object.geometry.parameters.radius * 3);
-    } else if (exoplanetIntersects.length > 0 && showExoplanets) {
-      const clickedExoplanet = exoplanetIntersects[0].object.userData;
-      onExoplanetClick(clickedExoplanet);
-      zoomToObject(exoplanetIntersects[0].object.position, exoplanetIntersects[0].object.geometry.parameters.radius * 3);
+  const handleMouseDown = useCallback((event) => {
+    if (isDrawMode) {
+      isDrawingRef.current = true;
+      const mouse = new THREE.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+      );
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, cameraRef.current);
+      const intersects = raycaster.intersectObjects(sceneRef.current.children);
+      if (intersects.length > 0) {
+        const startPoint = intersects[0].point;
+        const geometry = new THREE.BufferGeometry().setFromPoints([startPoint, startPoint]);
+        const material = new THREE.LineBasicMaterial({ color: 0xffffff });
+        currentLineRef.current = new THREE.Line(geometry, material);
+        sceneRef.current.add(currentLineRef.current);
+      }
     }
-  }, [onStarClick, onExoplanetClick, showExoplanets, zoomToObject]);
+  }, [isDrawMode]);
 
-  const handleResize = useCallback(() => {
-    if (cameraRef.current && rendererRef.current) {
-      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
-      cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+  const handleMouseMove = useCallback((event) => {
+    if (isDrawMode && isDrawingRef.current && currentLineRef.current) {
+      const mouse = new THREE.Vector2(
+        (event.clientX / window.innerWidth) * 2 - 1,
+        -(event.clientY / window.innerHeight) * 2 + 1
+      );
+      const raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, cameraRef.current);
+      const intersects = raycaster.intersectObjects(sceneRef.current.children);
+      if (intersects.length > 0) {
+        const endPoint = intersects[0].point;
+        const positions = currentLineRef.current.geometry.attributes.position.array;
+        positions[3] = endPoint.x;
+        positions[4] = endPoint.y;
+        positions[5] = endPoint.z;
+        currentLineRef.current.geometry.attributes.position.needsUpdate = true;
+      }
     }
-  }, []);
+  }, [isDrawMode]);
+
+  const handleMouseUp = useCallback(() => {
+    if (isDrawMode) {
+      isDrawingRef.current = false;
+      if (currentLineRef.current) {
+        setDrawingLines(prevLines => [...prevLines, currentLineRef.current]);
+        currentLineRef.current = null;
+      }
+    }
+  }, [isDrawMode]);
 
   useEffect(() => {
     setupScene();
     animate();
     window.addEventListener('resize', handleResize);
     window.addEventListener('click', handleClick);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('click', handleClick);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
