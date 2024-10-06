@@ -6,7 +6,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
+const constellations = [
 const constellations = [
   { name: 'Orion', coordinates: { x: 83.82, y: 5.39, z: -2.42 }, stars: 7, distance: 1344 },
   { name: 'Ursa Major', coordinates: { x: 165.46, y: 61.75, z: -8.93 }, stars: 7, distance: 80 },
@@ -21,7 +23,9 @@ const constellations = [
   { name: 'Aquila', coordinates: { x: 297.69, y: 8.87, z: 3.71 }, stars: 10, distance: 17 },
   { name: 'Pegasus', coordinates: { x: 344.41, y: 15.21, z: 3.51 }, stars: 9, distance: 133 },
 ];
+];
 
+const zoomOptions = [
 const zoomOptions = [
   { label: '10mm', value: 10 },
   { label: '12mm', value: 12 },
@@ -34,18 +38,26 @@ const zoomOptions = [
   { label: '350mm', value: 350 },
   { label: '500mm', value: 500 },
 ];
+];
+
+const exoplanets = [
+  { exoplanet_name: 'Proxima Centauri b', host_star: 'Proxima Centauri', distance_light_years: 4.24, planet_type: 'Rocky' },
+  { exoplanet_name: 'TRAPPIST-1e', host_star: 'TRAPPIST-1', distance_light_years: 39.5, planet_type: 'Rocky' },
+  // ... add the rest of the exoplanets data here
+];
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
-  const [skyboxUrl, setSkyboxUrl] = useState('https://jayrosen.design/nasa/GalaxyTex_NegativeX.png');
+  const [skyboxUrl, setSkyboxUrl] = useState('https://imgur.com/VhVRrHk.jpg');
   const [zoom, setZoom] = useState(35);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
+  const [selectedExoplanet, setSelectedExoplanet] = useState(null);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
   const skyboxOptions = [
-    { label: 'Galaxy Texture', value: 'https://jayrosen.design/nasa/GalaxyTex_NegativeX.png' },
+    { label: 'Galaxy Texture', value: 'https://imgur.com/VhVRrHk.jpg' },
     { label: 'Space', value: 'https://jayrosen.design/nasa/skybox-space.jpg' },
   ];
 
@@ -90,40 +102,41 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    let intervalId;
-    if (autoplay) {
-      intervalId = setInterval(() => {
-        const newCoordinates = {
-          x: coordinates.x + 0.1,
-          y: coordinates.y + 0.1,
-          z: coordinates.z + 0.1
-        };
-        setCoordinates(newCoordinates);
-        if (starMapRef.current) {
-          starMapRef.current.rotateSkybox(newCoordinates);
-        }
-      }, 100);
+  const handleExoplanetChange = (exoplanetName) => {
+    const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
+    if (exoplanet) {
+      setSelectedExoplanet(exoplanet);
+      const coords = {
+        x: Math.random() * 1000 - 500,
+        y: Math.random() * 1000 - 500,
+        z: Math.random() * 1000 - 500
+      };
+      if (starMapRef.current) {
+        starMapRef.current.addExoplanet(exoplanet.exoplanet_name, coords);
+        starMapRef.current.navigateToExoplanet(exoplanet.exoplanet_name);
+      }
     }
-    return () => {
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, [autoplay, coordinates]);
+  };
+
+  // ... keep existing useEffect for autoplay
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap ref={starMapRef} initialSkyboxUrl={skyboxUrl} />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">
-          {selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy'}
+          {selectedExoplanet ? selectedExoplanet.exoplanet_name : (selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy')}
         </h1>
         <p className="text-xl">
-          {selectedConstellation
-            ? `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`
-            : 'Estimated 100-400 billion stars • 100,000 light years in diameter'}
+          {selectedExoplanet
+            ? `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`
+            : (selectedConstellation
+              ? `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`
+              : 'Estimated 100-400 billion stars • 100,000 light years in diameter')}
         </p>
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
         <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
           <div className="flex space-x-2 justify-center">
             <Input
@@ -217,8 +230,40 @@ const Index = () => {
                 ))}
               </SelectContent>
             </Select>
+            <Select onValueChange={handleExoplanetChange}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Exoplanet" />
+              </SelectTrigger>
+              <SelectContent>
+                {exoplanets.map((exoplanet) => (
+                  <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
+                    {exoplanet.exoplanet_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </form>
+        {selectedExoplanet && (
+          <div className="mt-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Property</TableHead>
+                  <TableHead>Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Object.entries(selectedExoplanet).map(([key, value]) => (
+                  <TableRow key={key}>
+                    <TableCell>{key.replace(/_/g, ' ')}</TableCell>
+                    <TableCell>{value}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </div>
   );

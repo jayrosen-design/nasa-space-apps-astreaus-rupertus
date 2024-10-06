@@ -10,6 +10,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
   const rendererRef = useRef(null);
   const skyboxRef = useRef(null);
   const labelsRef = useRef([]);
+  const exoplanetsRef = useRef({});
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -39,12 +40,32 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
         cameraRef.current.setFocalLength(focalLength);
         cameraRef.current.updateProjectionMatrix();
       }
-    }
+    },
+    addExoplanet: (name, coords) => {
+      if (sceneRef.current && !exoplanetsRef.current[name]) {
+        const geometry = new THREE.SphereGeometry(5, 32, 32);
+        const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.set(coords.x, coords.y, coords.z);
+        sceneRef.current.add(sphere);
+        exoplanetsRef.current[name] = sphere;
+      }
+    },
+    navigateToExoplanet: (name) => {
+      const exoplanet = exoplanetsRef.current[name];
+      if (exoplanet && cameraRef.current) {
+        cameraRef.current.position.set(
+          exoplanet.position.x + 10,
+          exoplanet.position.y + 10,
+          exoplanet.position.z + 10
+        );
+        controlsRef.current?.target.copy(exoplanet.position);
+        controlsRef.current?.update();
+      }
+    },
   }));
 
   useEffect(() => {
-    if (!mountRef.current) return;
-
     // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -74,6 +95,18 @@ const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
     controlsRef.current = controls;
     controls.enableZoom = true;
     controls.enablePan = true;
+
+
+    // Update skybox texture
+    const loader = new THREE.TextureLoader();
+    loader.load('https://imgur.com/VhVRrHk.jpg', (texture) => {
+      const skyboxGeometry = new THREE.SphereGeometry(500, 60, 40);
+      skyboxGeometry.scale(-1, 1, 1);
+      const skyboxMaterial = new THREE.MeshBasicMaterial({ map: texture });
+      const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterial);
+      skyboxRef.current = skybox;
+      scene.add(skybox);
+    });
 
     // Add constellation labels
     const constellations = [
