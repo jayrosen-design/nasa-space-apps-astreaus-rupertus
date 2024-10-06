@@ -42,7 +42,12 @@ const Index = () => {
     const constellation = constellations.find(c => c.name === constellationName);
     if (constellation) {
       setSelectedConstellation(constellation);
-      navigateToCoordinates(constellation.coordinates);
+      const coords = {
+        x: constellation.coordinates.x,
+        y: constellation.coordinates.y,
+        z: constellation.coordinates.z
+      };
+      starMapRef.current?.navigateToCoordinates(coords);
     }
   };
 
@@ -61,17 +66,16 @@ const Index = () => {
     }
   };
 
-  const handleConstellationStarChange = (constellationName) => {
-    setSelectedConstellation(constellationName);
-    const stars = constellationStars.filter(star => star.constellation === constellationName);
-    if (stars.length > 0) {
-      const firstStar = stars[0];
+  const handleConstellationStarChange = (starName) => {
+    const star = constellationStars.find(s => s.star_name === starName);
+    if (star) {
+      setSelectedStar(star);
       const coords = {
-        x: Math.cos(firstStar.ra * Math.PI / 180) * Math.cos(firstStar.dec * Math.PI / 180) * 400,
-        y: Math.sin(firstStar.dec * Math.PI / 180) * 400,
-        z: Math.sin(firstStar.ra * Math.PI / 180) * Math.cos(firstStar.dec * Math.PI / 180) * 400
+        x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
+        y: Math.sin(star.dec * Math.PI / 180) * 400,
+        z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
       };
-      navigateToCoordinates(coords);
+      starMapRef.current?.navigateToCoordinates(coords);
     }
   };
 

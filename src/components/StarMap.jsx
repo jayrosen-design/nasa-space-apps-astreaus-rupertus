@@ -21,9 +21,15 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
-      if (cameraRef.current) {
-        cameraRef.current.position.set(coords.x, coords.y, coords.z);
-        controlsRef.current?.update();
+      if (cameraRef.current && controlsRef.current) {
+        const targetPosition = new THREE.Vector3(coords.x, coords.y, coords.z);
+        const distance = 50; // Adjust this value to change how close the camera gets to the target
+        const direction = new THREE.Vector3().subVectors(cameraRef.current.position, targetPosition).normalize();
+        const newPosition = new THREE.Vector3().addVectors(targetPosition, direction.multiplyScalar(distance));
+        
+        cameraRef.current.position.copy(newPosition);
+        controlsRef.current.target.copy(targetPosition);
+        controlsRef.current.update();
       }
     },
     rotateSkybox: (rotation) => {
