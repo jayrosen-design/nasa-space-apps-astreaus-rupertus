@@ -76,6 +76,8 @@ const ControlPanel = ({
   handleSkyboxToggle,
   isVisible,
   toggleVisibility,
+  isBackgroundMusicPlaying,
+  setIsBackgroundMusicPlaying,
 }) => (
   <div className={`fixed bottom-0 left-0 right-0 bg-background shadow transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
     <Button
@@ -128,6 +130,19 @@ const ControlPanel = ({
         {renderCheckbox("show-exoplanets", showExoplanets, setShowExoplanets, "Show Exoplanets")}
         {renderCheckbox("show-star-names", showStarNames, setShowStarNames, "Show Star Names")}
         {renderCheckbox("show-constellation-lines", showConstellationLines, setShowConstellationLines, "Show Constellation Lines")}
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="background-music"
+            checked={isBackgroundMusicPlaying}
+            onCheckedChange={(checked) => {
+              playClickSound();
+              setIsBackgroundMusicPlaying(checked);
+            }}
+          />
+          <label htmlFor="background-music" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Background Music
+          </label>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

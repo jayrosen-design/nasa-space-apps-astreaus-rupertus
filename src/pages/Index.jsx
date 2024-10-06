@@ -3,6 +3,7 @@ import StarMap from '../components/StarMap';
 import { constellations, exoplanets, skyboxOptions, constellationStars } from '../data/starMapData';
 import ControlPanel from '../components/ControlPanel';
 import { useTheme } from 'next-themes';
+import { playBackgroundMusic, stopBackgroundMusic } from '../utils/audio';
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
@@ -17,6 +18,17 @@ const Index = () => {
   const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]); // Set Sky 1 as default
 
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
+
+
+  const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
+
+  useEffect(() => {
+    if (isBackgroundMusicPlaying) {
+      playBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+  }, [isBackgroundMusicPlaying]);
 
   const toggleControlPanelVisibility = () => {
     setIsControlPanelVisible(prev => !prev);
@@ -142,6 +154,7 @@ const Index = () => {
     starMapRef.current?.updateSkyboxes();
   }, [activeSkyboxes]);
 
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap 
@@ -187,6 +200,8 @@ const Index = () => {
         handleSkyboxToggle={handleSkyboxToggle}
         isVisible={isControlPanelVisible}
         toggleVisibility={toggleControlPanelVisibility}
+        isBackgroundMusicPlaying={isBackgroundMusicPlaying}
+        setIsBackgroundMusicPlaying={setIsBackgroundMusicPlaying}
       />
     </div>
   );
