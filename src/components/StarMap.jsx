@@ -120,10 +120,16 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
 
     if (isDrawMode) {
       canvas.style.pointerEvents = 'auto';
-      controlsRef.current.enabled = false;
+      canvas.style.zIndex = '1';
+      if (controlsRef.current) {
+        controlsRef.current.enabled = false;
+      }
     } else {
       canvas.style.pointerEvents = 'none';
-      controlsRef.current.enabled = true;
+      canvas.style.zIndex = '0';
+      if (controlsRef.current) {
+        controlsRef.current.enabled = true;
+      }
       const ctx = canvas.getContext('2d');
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
