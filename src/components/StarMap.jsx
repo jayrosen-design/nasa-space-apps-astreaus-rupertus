@@ -29,9 +29,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   const {
     handleResize,
     handleClick,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp
   } = useStarMapInteractions(
     cameraRef,
     controlsRef,
@@ -128,18 +128,20 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    canvas.addEventListener('mousedown', handleMouseDown);
-    canvas.addEventListener('mousemove', handleMouseMove);
-    canvas.addEventListener('mouseup', handleMouseUp);
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerup', handlePointerUp);
+    canvas.addEventListener('pointerleave', handlePointerUp);
     window.addEventListener('click', handleClick);
 
     return () => {
-      canvas.removeEventListener('mousedown', handleMouseDown);
-      canvas.removeEventListener('mousemove', handleMouseMove);
-      canvas.removeEventListener('mouseup', handleMouseUp);
+      canvas.removeEventListener('pointerdown', handlePointerDown);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerup', handlePointerUp);
+      canvas.removeEventListener('pointerleave', handlePointerUp);
       window.removeEventListener('click', handleClick);
     };
-  }, [isDrawMode, handleMouseDown, handleMouseMove, handleMouseUp, handleClick]);
+  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
