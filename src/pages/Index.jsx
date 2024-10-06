@@ -141,20 +141,22 @@ const Index = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-background text-foreground">
-      <StarMap 
-        ref={starMapRef} 
-        showExoplanets={showExoplanets}
-        showStarNames={showStarNames}
-        showConstellationLines={showConstellationLines}
-        constellationStars={constellationStars}
-        onStarClick={handleStarClick}
-        onExoplanetClick={handleExoplanetClick}
-        autoplay={autoplay}
-        activeSkyboxes={activeSkyboxes}
-        isDrawMode={isDrawMode}
-      />
-      <div className="absolute top-0 left-0 right-0 p-4 text-center">
+    <div className="relative min-h-screen bg-background text-foreground flex flex-col">
+      <div className="flex-grow overflow-hidden">
+        <StarMap 
+          ref={starMapRef} 
+          showExoplanets={showExoplanets}
+          showStarNames={showStarNames}
+          showConstellationLines={showConstellationLines}
+          constellationStars={constellationStars}
+          onStarClick={handleStarClick}
+          onExoplanetClick={handleExoplanetClick}
+          autoplay={autoplay}
+          activeSkyboxes={activeSkyboxes}
+          isDrawMode={isDrawMode}
+        />
+      </div>
+      <div className="absolute top-0 left-0 right-0 p-4 text-center pointer-events-none">
         <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-2">{getTitle()}</h1>
         <p className="text-sm sm:text-base md:text-xl">{getDescription()}</p>
       </div>

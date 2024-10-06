@@ -7,6 +7,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   const {
     sceneRef,
@@ -114,9 +115,25 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   }, [setupScene, animate, handleResize]);
 
   useEffect(() => {
+    const updateCanvasSize = () => {
+      if (mountRef.current) {
+        const rect = mountRef.current.getBoundingClientRect();
+        setCanvasSize({ width: rect.width, height: rect.height });
+      }
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize);
+    };
+  }, []);
+
+  useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = canvasSize.width;
+    canvas.height = canvasSize.height;
 
     if (isDrawMode) {
       canvas.style.pointerEvents = 'auto';
@@ -147,7 +164,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       canvas.removeEventListener('pointerleave', handlePointerUp);
       window.removeEventListener('click', handleClick);
     };
-  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick]);
+  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
@@ -165,7 +182,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   }, [showExoplanets, showStarNames, showConstellationLines]);
 
   return (
-    <div ref={mountRef} style={{ width: '100%', height: '100vh', position: 'relative' }}>
+    <div ref={mountRef} style={{ width: '100%', height: 'calc(100vh - 60px)', position: 'relative' }}>
       <canvas
         ref={canvasRef}
         style={{
