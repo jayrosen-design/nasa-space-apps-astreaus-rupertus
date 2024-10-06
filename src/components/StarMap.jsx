@@ -32,6 +32,17 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     return new THREE.Mesh(skyboxGeometry, skyboxMaterial);
   }, []);
 
+  const zoomToObject = useCallback((position, radius = 10) => {
+    if (cameraRef.current && controlsRef.current) {
+      const distance = radius / Math.tan((cameraRef.current.fov / 2) * Math.PI / 180);
+      const newPosition = position.clone().add(new THREE.Vector3(0, 0, distance));
+      
+      cameraRef.current.position.copy(newPosition);
+      controlsRef.current.target.copy(position);
+      controlsRef.current.update();
+    }
+  }, []);
+
   const updateSkyboxes = useCallback(() => {
     if (sceneRef.current) {
       // Remove existing skyboxes
