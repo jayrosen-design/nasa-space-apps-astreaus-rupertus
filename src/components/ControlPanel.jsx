@@ -18,7 +18,7 @@ const renderCheckbox = (id, checked, onChange, label) => (
 const renderSelect = (onValueChange, value, placeholder, options, valueKey, labelKey) => (
   <div className="flex flex-col space-y-1">
     <Label>{placeholder}</Label>
-    <Select onValueChange={onValueChange} value={value}>
+    <Select onValueChange={onValueChange} value={value || ''}>
       <SelectTrigger className="w-[180px]">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

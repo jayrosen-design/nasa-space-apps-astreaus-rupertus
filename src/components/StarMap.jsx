@@ -44,15 +44,15 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     },
     navigateToExoplanet: (name) => {
       const exoplanetObj = exoplanetsRef.current[name];
-      if (exoplanetObj && exoplanetObj.sphere && cameraRef.current) {
+      if (exoplanetObj && exoplanetObj.sphere) {
         const position = exoplanetObj.sphere.position;
         cameraRef.current.position.set(
           position.x + 20,
           position.y + 20,
           position.z + 20
         );
-        controlsRef.current?.target.copy(position);
-        controlsRef.current?.update();
+        controlsRef.current.target.copy(position);
+        controlsRef.current.update();
       } else {
         console.warn(`Exoplanet ${name} not found or not properly initialized.`);
       }
