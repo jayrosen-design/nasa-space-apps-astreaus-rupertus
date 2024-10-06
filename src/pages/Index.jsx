@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
-import { constellations, zoomOptions, exoplanets, skyboxOptions, constellationStars } from '../data/starMapData';
+import { constellations, exoplanets, skyboxOptions, constellationStars } from '../data/starMapData';
 import ControlPanel from '../components/ControlPanel';
 import { useTheme } from 'next-themes';
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
-  const [zoom, setZoom] = useState(35);
   const [selectedObject, setSelectedObject] = useState(null);
   const [selectedObjectType, setSelectedObjectType] = useState(null);
   const [showExoplanets, setShowExoplanets] = useState(true);
@@ -94,6 +93,7 @@ const Index = () => {
     return () => clearInterval(autoplayInterval);
   }, [autoplay]);
 
+
   const getTitle = () => {
     if (!selectedObject) return 'Milky Way Galaxy';
     switch (selectedObjectType) {
@@ -150,8 +150,8 @@ const Index = () => {
         activeSkyboxes={activeSkyboxes}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
-        <h1 className="text-8xl font-bold mb-2">{getTitle()}</h1>
-        <p className="text-xl">{getDescription()}</p>
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-2">{getTitle()}</h1>
+        <p className="text-sm sm:text-base md:text-xl">{getDescription()}</p>
       </div>
       <ControlPanel
         coordinates={coordinates}
@@ -162,12 +162,9 @@ const Index = () => {
         theme={theme}
         setTheme={setTheme}
         handleConstellationChange={handleConstellationChange}
-        zoom={zoom}
-        handleZoomChange={handleZoomChange}
         handleExoplanetChange={handleExoplanetChange}
         skyboxOptions={skyboxOptions}
         constellations={constellations}
-        zoomOptions={zoomOptions}
         exoplanets={exoplanets}
         showExoplanets={showExoplanets}
         setShowExoplanets={setShowExoplanets}

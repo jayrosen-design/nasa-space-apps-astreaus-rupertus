@@ -19,7 +19,7 @@ const renderSelect = (onValueChange, value, placeholder, options, valueKey, labe
   <div className="flex flex-col space-y-1">
     <Label>{placeholder}</Label>
     <Select onValueChange={onValueChange} value={value || ''}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
@@ -42,12 +42,9 @@ const ControlPanel = ({
   theme,
   setTheme,
   handleConstellationChange,
-  zoom,
-  handleZoomChange,
   handleExoplanetChange,
   skyboxOptions,
   constellations,
-  zoomOptions,
   exoplanets,
   showExoplanets,
   setShowExoplanets,
@@ -64,8 +61,8 @@ const ControlPanel = ({
   handleSkyboxToggle,
 }) => (
   <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
-    <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
-      <div className="flex space-x-2 justify-center">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+      <div className="flex flex-wrap gap-2 justify-center">
         {['x', 'y', 'z'].map((axis) => (
           <Input
             key={axis}
@@ -80,7 +77,7 @@ const ControlPanel = ({
         <Button type="submit">Navigate</Button>
       </div>
       
-      <div className="flex items-center space-x-4 flex-wrap">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {renderCheckbox("autoplay", autoplay, setAutoplay, "Autoplay")}
         <div className="flex items-center space-x-2">
           <Switch
@@ -97,9 +94,8 @@ const ControlPanel = ({
         {renderCheckbox("show-constellation-lines", showConstellationLines, setShowConstellationLines, "Show Constellation Lines")}
       </div>
       
-      <div className="flex items-center space-x-2 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {renderSelect(handleConstellationChange, selectedConstellation?.name, "Select Constellation", constellations, "name", "name")}
-        {renderSelect(handleZoomChange, zoom.toString(), "Select Zoom", zoomOptions, "value", "label")}
         {renderSelect(handleExoplanetChange, selectedExoplanet?.exoplanet_name, "Select Exoplanet", exoplanets, "exoplanet_name", "exoplanet_name")}
         {renderSelect(
           handleConstellationStarChange,
@@ -111,7 +107,7 @@ const ControlPanel = ({
         )}
       </div>
 
-      <div className="flex flex-col space-y-1">
+      <div className="flex flex-col space-y-2">
         <Label>Skybox Layers</Label>
         <div className="flex flex-wrap gap-2">
           {skyboxOptions.map((option) => (

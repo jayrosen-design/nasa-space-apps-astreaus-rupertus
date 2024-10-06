@@ -12,9 +12,12 @@ export const createSkybox = (url) => {
 export const createLabel = (text, position, offset) => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
-  context.font = 'Bold 64px Arial'; // Increased font size
+  context.font = 'Bold 64px Arial';
   context.fillStyle = 'rgba(255,255,255,0.95)';
+  context.strokeStyle = 'rgba(0,0,0,0.5)';
+  context.lineWidth = 4;
   context.textAlign = 'center';
+  context.strokeText(text, canvas.width / 2, 64);
   context.fillText(text, canvas.width / 2, 64);
   
   const texture = new THREE.CanvasTexture(canvas);
@@ -23,8 +26,8 @@ export const createLabel = (text, position, offset) => {
     transparent: true,
   });
   const sprite = new THREE.Sprite(spriteMaterial);
-  sprite.position.set(position.x, position.y + offset + 0.5, position.z); // Moved closer to the object
-  sprite.scale.set(40, 20, 1); // Increased scale for larger text
+  sprite.position.set(position.x, position.y + offset + 0.5, position.z);
+  sprite.scale.set(60, 30, 1); // Increased scale for larger text area
   return sprite;
 };
 
@@ -41,7 +44,7 @@ export const createExoplanets = (exoplanets) => {
       specular: 0x333333,
       shininess: 30,
       transparent: true,
-      opacity: 0.9 // Added transparency to remove black background
+      opacity: 0.9
     });
     const sphere = new THREE.Mesh(geometry, material);
     
@@ -73,7 +76,7 @@ export const createConstellationStars = (constellationStars) => {
     const material = new THREE.MeshBasicMaterial({ 
       color: 0xffffff,
       transparent: true,
-      opacity: 0.9 // Added transparency to remove black background
+      opacity: 0.9
     });
     const sphere = new THREE.Mesh(geometry, material);
     
