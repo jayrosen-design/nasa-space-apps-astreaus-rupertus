@@ -78,12 +78,19 @@ const Index = () => {
     setSelectedStar(star);
     setSelectedExoplanet(null);
     setSelectedConstellation(null);
+    const coords = {
+      x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
+      y: Math.sin(star.dec * Math.PI / 180) * 400,
+      z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
+    };
+    navigateToCoordinates(coords);
   };
 
   const handleExoplanetClick = (exoplanet) => {
     setSelectedExoplanet(exoplanet);
     setSelectedStar(null);
     setSelectedConstellation(null);
+    starMapRef.current?.navigateToExoplanet(exoplanet.exoplanet_name);
   };
 
   useEffect(() => {
@@ -155,7 +162,7 @@ const Index = () => {
         setShowConstellationLines={setShowConstellationLines}
         selectedExoplanet={selectedExoplanet}
         selectedStar={selectedStar}
-        constellationStars={constellationStars} // Add this new prop
+        constellationStars={constellationStars}
       />
     </div>
   );

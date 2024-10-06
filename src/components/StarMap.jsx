@@ -19,7 +19,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
 
-  const zoomToObject = (position, radius = 10) => {
+  const zoomToObject = useCallback((position, radius = 10) => {
     if (cameraRef.current && controlsRef.current) {
       const distance = radius * 3;
       const direction = new THREE.Vector3().subVectors(cameraRef.current.position, position).normalize();
@@ -29,7 +29,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       controlsRef.current.target.copy(position);
       controlsRef.current.update();
     }
-  };
+  }, []);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -58,15 +58,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     navigateToExoplanet: (name) => {
       const exoplanetObj = exoplanetsRef.current[name];
       if (exoplanetObj && exoplanetObj.sphere) {
-        const position = exoplanetObj.sphere.position;
-        const radius = exoplanetObj.sphere.geometry.parameters.radius;
-        zoomToObject(position, radius);
-        
-        const originalColor = exoplanetObj.sphere.material.color.getHex();
-        exoplanetObj.sphere.material.color.setHex(0xffff00);
-        setTimeout(() => {
-          exoplanetObj.sphere.material.color.setHex(originalColor);
-        }, 2000);
+        zoomToObject(exoplanetObj.sphere.position, exoplanetObj.sphere.geometry.parameters.radius);
       }
     },
   }));
@@ -145,7 +137,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       onExoplanetClick(clickedExoplanet);
       zoomToObject(exoplanetIntersects[0].object.position, exoplanetIntersects[0].object.geometry.parameters.radius);
     }
-  }, [onStarClick, onExoplanetClick, showExoplanets]);
+  }, [onStarClick, onExoplanetClick, showExoplanets, zoomToObject]);
 
   const handleResize = useCallback(() => {
     if (cameraRef.current && rendererRef.current) {
