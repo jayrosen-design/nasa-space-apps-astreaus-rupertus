@@ -17,7 +17,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
 
-  // Create exoplanets only once
   const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
 
   useImperativeHandle(ref, () => ({
@@ -46,7 +45,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         cameraRef.current.updateProjectionMatrix();
       }
     },
-
     navigateToExoplanet: (name) => {
       const exoplanetObj = exoplanetsRef.current[name];
       if (exoplanetObj && exoplanetObj.sphere) {
@@ -62,7 +60,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         controlsRef.current.target.copy(position);
         controlsRef.current.update();
         
-        // Highlight the exoplanet
         const originalColor = exoplanetObj.sphere.material.color.getHex();
         exoplanetObj.sphere.material.color.setHex(0xffff00);
         setTimeout(() => {
@@ -72,8 +69,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     },
   }));
 
-  useEffect(() => {
-  useEffect(() => {
+  const setupScene = () => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -92,7 +88,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     controlsRef.current = controls;
     controls.enableZoom = true;
     controls.enablePan = true;
-
 
     // Add exoplanets to the scene
     exoplanetObjects.forEach(obj => sceneRef.current.add(obj));
@@ -113,35 +108,33 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     constellationLinesRef.current = createConstellationLines(constellations, starsRef.current);
     constellationLinesRef.current.forEach(line => scene.add(line));
 
-    // Add lights
     scene.add(new THREE.AmbientLight(0x404040));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
+  };
 
-    const animate = () => {
-      requestAnimationFrame(animate);
-      controls.update();
-      if (skyboxRef.current && autoplay) {
-        skyboxRef.current.rotation.y += 0.0001;
-      }
-      Object.values(exoplanetsRef.current).forEach(({ label }) => {
-        label.quaternion.copy(camera.quaternion);
-      });
-      renderer.render(scene, camera);
-    };
-    animate();
+  const animate = () => {
+    requestAnimationFrame(animate);
+    controlsRef.current.update();
+    if (skyboxRef.current && autoplay) {
+      skyboxRef.current.rotation.y += 0.0001;
+    }
+    Object.values(exoplanetsRef.current).forEach(({ label }) => {
+      label.quaternion.copy(cameraRef.current.quaternion);
+    });
+    rendererRef.current.render(sceneRef.current, cameraRef.current);
+  };
 
-    const handleResize = () => {
-      if (camera && renderer) {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-    };
-    window.addEventListener('resize', handleResize);
+  const handleResize = () => {
+    if (cameraRef.current && rendererRef.current) {
+      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+    }
+  };
 
-    const handleClick = (event) => {
+  const handleClick = (event) => {
       event.preventDefault();
       mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -171,8 +164,12 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         controlsRef.current.target.copy(exoplanetIntersects[0].object.position);
         controlsRef.current.update();
       }
-    };
+  };
 
+  useEffect(() => {
+    setupScene();
+    animate();
+    window.addEventListener('resize', handleResize);
     window.addEventListener('click', handleClick);
 
     return () => {
@@ -184,7 +181,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-
   }, [initialSkyboxUrl, onStarClick, onExoplanetClick, showExoplanets, autoplay, exoplanetObjects, exoplanetLabels]);
 
   useEffect(() => {
