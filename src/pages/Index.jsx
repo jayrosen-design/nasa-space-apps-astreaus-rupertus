@@ -3,11 +3,18 @@ import StarMap from '../components/StarMap';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
+  const [skyboxUrl, setSkyboxUrl] = useState('https://jayrosen.design/nasa/skybox-space.jpg');
   const starMapRef = useRef(null);
+
+  const skyboxOptions = [
+    { label: 'Galaxy Texture', value: 'https://opengameart.org/sites/default/files/GalaxyTex_NegativeX.png' },
+    { label: 'Space', value: 'https://jayrosen.design/nasa/skybox-space.jpg' },
+  ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,6 +29,13 @@ const Index = () => {
     e.preventDefault();
     if (starMapRef.current) {
       starMapRef.current.navigateToCoordinates(coordinates);
+    }
+  };
+
+  const handleSkyboxChange = (value) => {
+    setSkyboxUrl(value);
+    if (starMapRef.current) {
+      starMapRef.current.updateSkybox(value);
     }
   };
 
@@ -47,7 +61,7 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen">
-      <StarMap ref={starMapRef} />
+      <StarMap ref={starMapRef} initialSkyboxUrl={skyboxUrl} />
       <div className="absolute bottom-0 left-0 right-0 bg-white p-4 shadow">
         <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
           <div className="flex space-x-2 justify-center">
@@ -89,6 +103,20 @@ const Index = () => {
             >
               Autoplay
             </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Select onValueChange={handleSkyboxChange} defaultValue={skyboxUrl}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select Skybox" />
+              </SelectTrigger>
+              <SelectContent>
+                {skyboxOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </form>
       </div>

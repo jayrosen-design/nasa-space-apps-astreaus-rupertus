@@ -2,7 +2,7 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-const StarMap = forwardRef((props, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -23,6 +23,17 @@ const StarMap = forwardRef((props, ref) => {
         skyboxRef.current.rotation.y = coords.y * Math.PI / 180;
         skyboxRef.current.rotation.z = coords.z * Math.PI / 180;
       }
+    },
+    updateSkybox: (url) => {
+      if (skyboxRef.current && sceneRef.current) {
+        const loader = new THREE.TextureLoader();
+        loader.load(url, (texture) => {
+          const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
+          rt.fromEquirectangularTexture(rendererRef.current, texture);
+          skyboxRef.current.material.envMap = rt.texture;
+          skyboxRef.current.material.needsUpdate = true;
+        });
+      }
     }
   }));
 
@@ -41,7 +52,7 @@ const StarMap = forwardRef((props, ref) => {
 
     // Skybox
     const loader = new THREE.TextureLoader();
-    loader.load('https://jayrosen.design/nasa/skybox-space.jpg', (texture) => {
+    loader.load(initialSkyboxUrl, (texture) => {
       const rt = new THREE.WebGLCubeRenderTarget(texture.image.height);
       rt.fromEquirectangularTexture(renderer, texture);
       const skyboxGeometry = new THREE.BoxGeometry(500, 500, 500);
@@ -91,7 +102,7 @@ const StarMap = forwardRef((props, ref) => {
         controlsRef.current.dispose();
       }
     };
-  }, []);
+  }, [initialSkyboxUrl]);
 
   return <div ref={mountRef} style={{ width: '100%', height: '100vh' }} />;
 });
