@@ -59,7 +59,6 @@ const ControlPanel = ({
           <Button type="submit">Navigate</Button>
         </div>
         <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Checkbox
               id="autoplay"
@@ -100,7 +99,6 @@ const ControlPanel = ({
             </label>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
         <div className="flex items-center space-x-2">
           <Select onValueChange={handleSkyboxChange} defaultValue={skyboxUrl}>
             <SelectTrigger className="w-[180px]">

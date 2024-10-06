@@ -193,13 +193,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Update exoplanet visibility
-    useEffect(() => {
-      Object.values(exoplanetsRef.current).forEach((exoplanet) => {
-        exoplanet.visible = showExoplanets;
-      });
-    }, [showExoplanets]);
-
     return () => {
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && rendererRef.current) {
@@ -209,6 +202,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets }, ref) => {
       controlsRef.current?.dispose();
     };
   }, [initialSkyboxUrl]);
+
+  // Update exoplanet visibility
+  useEffect(() => {
+    Object.values(exoplanetsRef.current).forEach((exoplanet) => {
+      exoplanet.visible = showExoplanets;
+    });
+  }, [showExoplanets]);
 
   return <div ref={mountRef} style={{ width: '100%', height: '100vh' }} />;
 });
