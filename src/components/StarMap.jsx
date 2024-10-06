@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
@@ -16,6 +16,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   const constellationLinesRef = useRef([]);
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
+
+  // Create exoplanets only once
+  const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -43,11 +46,12 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         cameraRef.current.updateProjectionMatrix();
       }
     },
+
     navigateToExoplanet: (name) => {
       const exoplanetObj = exoplanetsRef.current[name];
       if (exoplanetObj && exoplanetObj.sphere) {
         const position = exoplanetObj.sphere.position;
-        const offset = 50; // Increased offset for better visibility
+        const offset = 50;
         const newCameraPosition = new THREE.Vector3(
           position.x + offset,
           position.y + offset,
@@ -60,14 +64,15 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
         
         // Highlight the exoplanet
         const originalColor = exoplanetObj.sphere.material.color.getHex();
-        exoplanetObj.sphere.material.color.setHex(0xffff00); // Yellow highlight
+        exoplanetObj.sphere.material.color.setHex(0xffff00);
         setTimeout(() => {
           exoplanetObj.sphere.material.color.setHex(originalColor);
-        }, 2000); // Reset color after 2 seconds
+        }, 2000);
       }
     },
   }));
 
+  useEffect(() => {
   useEffect(() => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
@@ -88,9 +93,10 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    const { exoplanetObjects, exoplanetLabels } = createExoplanets(exoplanets);
-    exoplanetObjects.forEach(obj => scene.add(obj));
-    exoplanetLabels.forEach(label => scene.add(label));
+
+    // Add exoplanets to the scene
+    exoplanetObjects.forEach(obj => sceneRef.current.add(obj));
+    exoplanetLabels.forEach(label => sceneRef.current.add(label));
     exoplanetsRef.current = exoplanetObjects.reduce((acc, obj, index) => {
       acc[exoplanets[index].exoplanet_name] = { sphere: obj, label: exoplanetLabels[index] };
       return acc;
@@ -178,7 +184,8 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [initialSkyboxUrl, onStarClick, onExoplanetClick, showExoplanets, autoplay]);
+
+  }, [initialSkyboxUrl, onStarClick, onExoplanetClick, showExoplanets, autoplay, exoplanetObjects, exoplanetLabels]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {

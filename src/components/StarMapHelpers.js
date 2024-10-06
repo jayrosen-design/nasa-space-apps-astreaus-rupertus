@@ -14,22 +14,23 @@ export const createExoplanets = (exoplanets) => {
   const exoplanetLabels = [];
 
   exoplanets.forEach((exoplanet, index) => {
-    const radius = 5 + Math.random() * 5;
+    const radius = 5 + (index % 5); // Deterministic size based on index
     const geometry = new THREE.SphereGeometry(radius, 32, 32);
     const material = new THREE.MeshPhongMaterial({
-      color: Math.random() * 0xffffff,
+      color: new THREE.Color(0.5 + index * 0.05, 0.2, 0.5 + index * 0.03), // Deterministic color
       emissive: 0x111111,
       specular: 0x333333,
       shininess: 30
     });
     const sphere = new THREE.Mesh(geometry, material);
     
+    // Deterministic position based on index
     const angle = index * 0.5;
     const distance = 100 + index * 30;
     sphere.position.set(
       Math.cos(angle) * distance,
       Math.sin(angle) * distance,
-      (Math.random() - 0.5) * 200
+      (index % 2 === 0 ? 1 : -1) * (50 + index * 10)
     );
     
     sphere.userData = exoplanet;
