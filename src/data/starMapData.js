@@ -33,6 +33,6 @@ export const exoplanets = [
 ];
 
 export const skyboxOptions = [
-  { label: 'Galaxy Texture', value: 'https://imgur.com/VhVRrHk.jpg' },
-  { label: 'Space', value: 'https://jayrosen.design/nasa/skybox-space.jpg' },
+  { label: 'Galaxy Texture', value: 'https://i.imgur.com/VhVRrHk.jpeg' },
+  { label: 'Space', value: 'https://imgur.com/VhVRrHk.jpg' },
 ];

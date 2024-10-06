@@ -12,7 +12,7 @@ import { constellations, zoomOptions, exoplanets, skyboxOptions } from '../data/
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
   const [autoplay, setAutoplay] = useState(false);
-  const [skyboxUrl, setSkyboxUrl] = useState('https://imgur.com/VhVRrHk.jpg');
+  const [skyboxUrl, setSkyboxUrl] = useState('https://i.imgur.com/VhVRrHk.jpeg');
   const [zoom, setZoom] = useState(35);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedExoplanet, setSelectedExoplanet] = useState(null);
@@ -78,7 +78,6 @@ const Index = () => {
         </p>
       </div>
       <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
         <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
           <div className="flex space-x-2 justify-center">
             <Input
@@ -186,28 +185,27 @@ const Index = () => {
             </Select>
           </div>
         </form>
-        </form>
-        {selectedExoplanet && (
-          <div className="mt-4">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Property</TableHead>
-                  <TableHead>Value</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {Object.entries(selectedExoplanet).map(([key, value]) => (
-                  <TableRow key={key}>
-                    <TableCell>{key.replace(/_/g, ' ')}</TableCell>
-                    <TableCell>{value}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
       </div>
+      {selectedExoplanet && (
+        <div className="absolute bottom-4 right-4 bg-background/80 p-4 rounded-lg shadow-lg max-w-sm">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Property</TableHead>
+                <TableHead>Value</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Object.entries(selectedExoplanet).map(([key, value]) => (
+                <TableRow key={key}>
+                  <TableCell>{key.replace(/_/g, ' ')}</TableCell>
+                  <TableCell>{value}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 };
