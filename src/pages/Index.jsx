@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -8,6 +8,8 @@ import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { constellations, zoomOptions, exoplanets, skyboxOptions } from '../data/starMapData';
+import ControlPanel from '../components/ControlPanel';
+import ExoplanetInfo from '../components/ExoplanetInfo';
 
 const Index = () => {
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 });
@@ -62,6 +64,22 @@ const Index = () => {
     }
   };
 
+  useEffect(() => {
+    let intervalId;
+    if (autoplay) {
+      intervalId = setInterval(() => {
+        const newCoords = {
+          x: Math.random() * 1000 - 500,
+          y: Math.random() * 1000 - 500,
+          z: Math.random() * 1000 - 500
+        };
+        setCoordinates(newCoords);
+        starMapRef.current?.navigateToCoordinates(newCoords);
+      }, 5000); // Change position every 5 seconds
+    }
+    return () => clearInterval(intervalId);
+  }, [autoplay]);
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap ref={starMapRef} initialSkyboxUrl={skyboxUrl} />
@@ -77,135 +95,26 @@ const Index = () => {
               : 'Estimated 100-400 billion stars • 100,000 light years in diameter')}
         </p>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
-        <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
-          <div className="flex space-x-2 justify-center">
-            <Input
-              type="number"
-              name="x"
-              value={coordinates.x}
-              onChange={handleInputChange}
-              placeholder="X"
-              className="w-20"
-            />
-            <Input
-              type="number"
-              name="y"
-              value={coordinates.y}
-              onChange={handleInputChange}
-              placeholder="Y"
-              className="w-20"
-            />
-            <Input
-              type="number"
-              name="z"
-              value={coordinates.z}
-              onChange={handleInputChange}
-              placeholder="Z"
-              className="w-20"
-            />
-            <Button type="submit">Navigate</Button>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="autoplay"
-                checked={autoplay}
-                onCheckedChange={setAutoplay}
-              />
-              <label
-                htmlFor="autoplay"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Autoplay
-              </label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="dark-mode"
-                checked={theme === 'dark'}
-                onCheckedChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              />
-              <label
-                htmlFor="dark-mode"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Dark Mode
-              </label>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Select onValueChange={handleSkyboxChange} defaultValue={skyboxUrl}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Skybox" />
-              </SelectTrigger>
-              <SelectContent>
-                {skyboxOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={handleConstellationChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Constellation" />
-              </SelectTrigger>
-              <SelectContent>
-                {constellations.map((constellation) => (
-                  <SelectItem key={constellation.name} value={constellation.name}>
-                    {constellation.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={handleZoomChange} defaultValue={zoom}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Zoom" />
-              </SelectTrigger>
-              <SelectContent>
-                {zoomOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select onValueChange={handleExoplanetChange}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select Exoplanet" />
-              </SelectTrigger>
-              <SelectContent>
-                {exoplanets.map((exoplanet) => (
-                  <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
-                    {exoplanet.exoplanet_name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </form>
-      </div>
-      {selectedExoplanet && (
-        <div className="absolute bottom-4 right-4 bg-background/80 p-4 rounded-lg shadow-lg max-w-sm">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Property</TableHead>
-                <TableHead>Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Object.entries(selectedExoplanet).map(([key, value]) => (
-                <TableRow key={key}>
-                  <TableCell>{key.replace(/_/g, ' ')}</TableCell>
-                  <TableCell>{value}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <ControlPanel
+        coordinates={coordinates}
+        handleInputChange={handleInputChange}
+        handleSubmit={handleSubmit}
+        autoplay={autoplay}
+        setAutoplay={setAutoplay}
+        theme={theme}
+        setTheme={setTheme}
+        skyboxUrl={skyboxUrl}
+        handleSkyboxChange={handleSkyboxChange}
+        handleConstellationChange={handleConstellationChange}
+        zoom={zoom}
+        handleZoomChange={handleZoomChange}
+        handleExoplanetChange={handleExoplanetChange}
+        skyboxOptions={skyboxOptions}
+        constellations={constellations}
+        zoomOptions={zoomOptions}
+        exoplanets={exoplanets}
+      />
+      {selectedExoplanet && <ExoplanetInfo exoplanet={selectedExoplanet} />}
     </div>
   );
 };
