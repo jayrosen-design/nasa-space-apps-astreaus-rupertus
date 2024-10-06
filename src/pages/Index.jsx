@@ -18,17 +18,9 @@ const Index = () => {
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
-  const handleConstellationStarChange = (starName) => {
-    const star = constellationStars.find(s => s.star_name === starName);
-    if (star) {
-      setSelectedStar(star);
-      const coords = {
-        x: Math.cos(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400,
-        y: Math.sin(star.dec * Math.PI / 180) * 400,
-        z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
-      };
-      navigateToCoordinates(coords);
-    }
+  const navigateToCoordinates = (coords) => {
+    setCoordinates(coords);
+    starMapRef.current?.navigateToCoordinates(coords);
   };
 
   const handleInputChange = (e) => {
@@ -41,11 +33,6 @@ const Index = () => {
     navigateToCoordinates(coordinates);
   };
 
-  const navigateToCoordinates = (coords) => {
-    setCoordinates(coords);
-    starMapRef.current?.navigateToCoordinates(coords);
-  };
-
   const handleSkyboxChange = (value) => {
     setSkyboxUrl(value);
     starMapRef.current?.updateSkybox(value);
@@ -55,12 +42,7 @@ const Index = () => {
     const constellation = constellations.find(c => c.name === constellationName);
     if (constellation) {
       setSelectedConstellation(constellation);
-      const coords = {
-        x: constellation.coordinates.x,
-        y: constellation.coordinates.y,
-        z: constellation.coordinates.z
-      };
-      starMapRef.current?.navigateToCoordinates(coords);
+      navigateToCoordinates(constellation.coordinates);
     }
   };
 
@@ -88,7 +70,7 @@ const Index = () => {
         y: Math.sin(star.dec * Math.PI / 180) * 400,
         z: -Math.sin(star.ra * Math.PI / 180) * Math.cos(star.dec * Math.PI / 180) * 400
       };
-      starMapRef.current?.navigateToCoordinates(coords);
+      navigateToCoordinates(coords);
     }
   };
 
@@ -111,10 +93,22 @@ const Index = () => {
         starMapRef.current?.rotateSkybox(0.001);
       }, 16);
     }
-    return () => {
-      clearInterval(autoplayInterval);
-    };
+    return () => clearInterval(autoplayInterval);
   }, [autoplay]);
+
+  const getTitle = () => {
+    if (selectedStar) return selectedStar.star_name;
+    if (selectedExoplanet) return selectedExoplanet.exoplanet_name;
+    if (selectedConstellation) return selectedConstellation.name;
+    return 'Milky Way Galaxy';
+  };
+
+  const getDescription = () => {
+    if (selectedStar) return `Constellation: ${selectedStar.constellation} • Magnitude: ${selectedStar.magnitude}`;
+    if (selectedExoplanet) return `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`;
+    if (selectedConstellation) return `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`;
+    return 'Estimated 100-400 billion stars • 100,000 light years in diameter';
+  };
 
   return (
     <div className="relative min-h-screen bg-background text-foreground">
@@ -130,18 +124,8 @@ const Index = () => {
         autoplay={autoplay}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
-        <h1 className="text-8xl font-bold mb-2">
-          {selectedStar ? selectedStar.star_name : (selectedExoplanet ? selectedExoplanet.exoplanet_name : (selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy'))}
-        </h1>
-        <p className="text-xl">
-          {selectedStar
-            ? `Constellation: ${selectedStar.constellation} • Magnitude: ${selectedStar.magnitude}`
-            : (selectedExoplanet
-              ? `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`
-              : (selectedConstellation
-                ? `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`
-                : 'Estimated 100-400 billion stars • 100,000 light years in diameter'))}
-        </p>
+        <h1 className="text-8xl font-bold mb-2">{getTitle()}</h1>
+        <p className="text-xl">{getDescription()}</p>
       </div>
       <ControlPanel
         coordinates={coordinates}
