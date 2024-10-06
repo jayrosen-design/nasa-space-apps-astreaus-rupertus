@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
@@ -21,7 +21,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   const zoomToObject = (position, radius = 10) => {
     if (cameraRef.current && controlsRef.current) {
-      const distance = radius * 3; // Adjust this multiplier to change how close the camera gets
+      const distance = radius * 3;
       const direction = new THREE.Vector3().subVectors(cameraRef.current.position, position).normalize();
       const newPosition = new THREE.Vector3().addVectors(position, direction.multiplyScalar(distance));
       
@@ -71,7 +71,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     },
   }));
 
-  const setupScene = () => {
+  const setupScene = useCallback(() => {
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -91,7 +91,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     controls.enableZoom = true;
     controls.enablePan = true;
 
-    // Add exoplanets, stars, and constellation lines to the scene
     exoplanetObjects.forEach(obj => scene.add(obj));
     exoplanetLabels.forEach(label => scene.add(label));
     exoplanetsRef.current = exoplanetObjects.reduce((acc, obj, index) => {
@@ -110,14 +109,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     constellationLinesRef.current = createConstellationLines(constellations, starsRef.current);
     constellationLinesRef.current.forEach(line => scene.add(line));
 
-    // Add lights
     scene.add(new THREE.AmbientLight(0x404040));
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
-  };
+  }, [initialSkyboxUrl, exoplanetObjects, exoplanetLabels]);
 
-  const animate = () => {
+  const animate = useCallback(() => {
     requestAnimationFrame(animate);
     controlsRef.current.update();
     if (autoplay && skyboxRef.current) {
@@ -127,9 +125,9 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       label.quaternion.copy(cameraRef.current.quaternion);
     });
     rendererRef.current.render(sceneRef.current, cameraRef.current);
-  };
+  }, [autoplay]);
 
-  const handleClick = (event) => {
+  const handleClick = useCallback((event) => {
     event.preventDefault();
     mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
     mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
@@ -147,7 +145,15 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       onExoplanetClick(clickedExoplanet);
       zoomToObject(exoplanetIntersects[0].object.position, exoplanetIntersects[0].object.geometry.parameters.radius);
     }
-  };
+  }, [onStarClick, onExoplanetClick, showExoplanets]);
+
+  const handleResize = useCallback(() => {
+    if (cameraRef.current && rendererRef.current) {
+      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+      cameraRef.current.updateProjectionMatrix();
+      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+    }
+  }, []);
 
   useEffect(() => {
     setupScene();
@@ -164,7 +170,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [initialSkyboxUrl, onStarClick, onExoplanetClick, showExoplanets, autoplay, exoplanetObjects, exoplanetLabels]);
+  }, [setupScene, animate, handleResize, handleClick]);
 
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
