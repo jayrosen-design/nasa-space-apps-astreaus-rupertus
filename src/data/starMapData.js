@@ -45,8 +45,12 @@ export const exoplanets = [
 ];
 
 export const skyboxOptions = [
-  { label: 'Galaxy Texture', value: 'https://i.imgur.com/VhVRrHk.jpeg' },
-  { label: 'Space', value: 'https://imgur.com/VhVRrHk.jpg' },
+  { label: 'Milky Way', value: 'https://i.imgur.com/SNyB8xA.jpeg', layer: 'background' },
+  { label: 'Constellations Black', value: 'https://i.imgur.com/TWMCZWf.png', layer: 'overlay' },
+  { label: 'Constellations Alpha', value: 'https://i.imgur.com/JBn3avO.png', layer: 'overlay' },
+  { label: 'Constellation Zones', value: 'https://i.imgur.com/4HkDLiE.png', layer: 'overlay' },
+  { label: 'Constellation Zones Alpha', value: 'https://i.imgur.com/P2iVDAa.png', layer: 'overlay' },
+  { label: 'Black', value: 'https://i.imgur.com/KUoe1Xv.png', layer: 'background' },
 ];
 
 export const constellationStars = [

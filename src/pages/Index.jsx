@@ -16,6 +16,7 @@ const Index = () => {
   const [showConstellationLines, setShowConstellationLines] = useState(true);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
+  const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]);
 
   const navigateToCoordinates = (coords) => {
     setCoordinates(coords);
@@ -132,6 +133,20 @@ const Index = () => {
     }
   };
 
+  const handleSkyboxToggle = (skyboxOption, isChecked) => {
+    setActiveSkyboxes(prev => {
+      if (isChecked) {
+        return [...prev, skyboxOption];
+      } else {
+        return prev.filter(sb => sb.label !== skyboxOption.label);
+      }
+    });
+  };
+
+  useEffect(() => {
+    starMapRef.current?.updateSkyboxes();
+  }, [activeSkyboxes]);
+
   return (
     <div className="relative min-h-screen bg-background text-foreground">
       <StarMap 
@@ -144,6 +159,7 @@ const Index = () => {
         onStarClick={handleStarClick}
         onExoplanetClick={handleExoplanetClick}
         autoplay={autoplay}
+        activeSkyboxes={activeSkyboxes}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">{getTitle()}</h1>
@@ -178,6 +194,8 @@ const Index = () => {
         selectedExoplanet={selectedObjectType === 'exoplanet' ? selectedObject : null}
         selectedStar={selectedObjectType === 'star' ? selectedObject : null}
         constellationStars={constellationStars}
+        activeSkyboxes={activeSkyboxes}
+        handleSkyboxToggle={handleSkyboxToggle}
       />
     </div>
   );

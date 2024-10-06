@@ -61,7 +61,9 @@ const ControlPanel = ({
   setShowConstellationLines,
   selectedExoplanet,
   selectedStar,
-  constellationStars, // Add this new prop
+  constellationStars,
+  activeSkyboxes,
+  handleSkyboxToggle,
 }) => (
   <div className="absolute bottom-0 left-0 right-0 bg-background p-4 shadow">
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2 items-center">
@@ -106,10 +108,28 @@ const ControlPanel = ({
           handleConstellationStarChange,
           selectedStar?.star_name,
           "Select Constellation Star",
-          constellationStars, // Use constellationStars directly
+          constellationStars,
           "star_name",
           "star_name"
         )}
+      </div>
+
+      <div className="flex flex-col space-y-1">
+        <Label>Skybox Layers</Label>
+        <div className="flex flex-wrap gap-2">
+          {skyboxOptions.map((option) => (
+            <div key={option.label} className="flex items-center space-x-2">
+              <Checkbox
+                id={`skybox-${option.label}`}
+                checked={activeSkyboxes.some(skybox => skybox.label === option.label)}
+                onCheckedChange={(checked) => handleSkyboxToggle(option, checked)}
+              />
+              <label htmlFor={`skybox-${option.label}`} className="text-sm">
+                {option.label}
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
     </form>
   </div>

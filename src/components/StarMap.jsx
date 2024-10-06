@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle, useMemo, useCallback } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { exoplanets, constellationStars, constellations } from '../data/starMapData';
-import { createSkybox, createExoplanets, createConstellationStars, createConstellationLines } from './StarMapHelpers';
+import { exoplanets, constellationStars, constellations, skyboxOptions } from '../data/starMapData';
+import { createExoplanets, createConstellationStars, createConstellationLines } from './StarMapHelpers';
 
-const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay }, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
   const rendererRef = useRef(null);
-  const skyboxRef = useRef(null);
+  const skyboxesRef = useRef({});
   const starsRef = useRef({});
   const exoplanetsRef = useRef({});
   const constellationLinesRef = useRef([]);
@@ -19,17 +19,34 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
 
   const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
 
-  const zoomToObject = useCallback((position, radius = 10) => {
-    if (cameraRef.current && controlsRef.current) {
-      const distance = radius * 3;
-      const direction = new THREE.Vector3().subVectors(cameraRef.current.position, position).normalize();
-      const newPosition = new THREE.Vector3().addVectors(position, direction.multiplyScalar(distance));
-      
-      cameraRef.current.position.copy(newPosition);
-      controlsRef.current.target.copy(position);
-      controlsRef.current.update();
-    }
+  const createSkybox = useCallback((url, opacity = 1) => {
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load(url);
+    const skyboxGeometry = new THREE.SphereGeometry(500, 60, 40);
+    skyboxGeometry.scale(-1, 1, 1);
+    const skyboxMaterial = new THREE.MeshBasicMaterial({ 
+      map: texture,
+      transparent: true,
+      opacity: opacity
+    });
+    return new THREE.Mesh(skyboxGeometry, skyboxMaterial);
   }, []);
+
+  const updateSkyboxes = useCallback(() => {
+    if (sceneRef.current) {
+      // Remove existing skyboxes
+      Object.values(skyboxesRef.current).forEach(skybox => {
+        sceneRef.current.remove(skybox);
+      });
+
+      // Add active skyboxes
+      activeSkyboxes.forEach(skyboxOption => {
+        const skybox = createSkybox(skyboxOption.value, skyboxOption.layer === 'overlay' ? 0.5 : 1);
+        skyboxesRef.current[skyboxOption.label] = skybox;
+        sceneRef.current.add(skybox);
+      });
+    }
+  }, [activeSkyboxes, createSkybox]);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -37,18 +54,13 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
       zoomToObject(position);
     },
     rotateSkybox: (rotation) => {
-      if (skyboxRef.current && autoplay) {
-        skyboxRef.current.rotation.y += rotation;
-      }
-    },
-    updateSkybox: (url) => {
-      if (skyboxRef.current && sceneRef.current) {
-        new THREE.TextureLoader().load(url, (texture) => {
-          skyboxRef.current.material.map = texture;
-          skyboxRef.current.material.needsUpdate = true;
+      if (skyboxesRef.current && autoplay) {
+        Object.values(skyboxesRef.current).forEach(skybox => {
+          skybox.rotation.y += rotation;
         });
       }
     },
+    updateSkyboxes: updateSkyboxes,
     setZoom: (focalLength) => {
       if (cameraRef.current) {
         const newZoom = focalLength / 35;
@@ -74,9 +86,6 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
-
-    skyboxRef.current = createSkybox(initialSkyboxUrl);
-    scene.add(skyboxRef.current);
 
     camera.position.set(0, 0, 100);
 
@@ -107,13 +116,17 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
-  }, [initialSkyboxUrl, exoplanetObjects, exoplanetLabels]);
+
+    updateSkyboxes();
+  }, [initialSkyboxUrl, exoplanetObjects, exoplanetLabels, updateSkyboxes]);
 
   const animate = useCallback(() => {
     requestAnimationFrame(animate);
     controlsRef.current.update();
-    if (autoplay && skyboxRef.current) {
-      skyboxRef.current.rotation.y += 0.0001;
+    if (autoplay) {
+      Object.values(skyboxesRef.current).forEach(skybox => {
+        skybox.rotation.y += 0.0001;
+      });
     }
     Object.values(exoplanetsRef.current).forEach(({ label }) => {
       label.quaternion.copy(cameraRef.current.quaternion);
