@@ -15,6 +15,7 @@ const Index = () => {
   const [showExoplanets, setShowExoplanets] = useState(true);
   const [showStarNames, setShowStarNames] = useState(true);
   const [showConstellationLines, setShowConstellationLines] = useState(true);
+  const [selectedStar, setSelectedStar] = useState(null);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
 
@@ -80,6 +81,12 @@ const Index = () => {
     }
   };
 
+  const handleStarClick = (star) => {
+    setSelectedStar(star);
+    setSelectedExoplanet(null);
+    setSelectedConstellation(null);
+  };
+
   useEffect(() => {
     let autoplayInterval;
     if (autoplay) {
@@ -101,17 +108,20 @@ const Index = () => {
         showStarNames={showStarNames}
         showConstellationLines={showConstellationLines}
         constellationStars={constellationStars}
+        onStarClick={handleStarClick}
       />
       <div className="absolute top-0 left-0 right-0 p-4 text-center">
         <h1 className="text-8xl font-bold mb-2">
-          {selectedExoplanet ? selectedExoplanet.exoplanet_name : (selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy')}
+          {selectedStar ? selectedStar.star_name : (selectedExoplanet ? selectedExoplanet.exoplanet_name : (selectedConstellation ? selectedConstellation.name : 'Milky Way Galaxy'))}
         </h1>
         <p className="text-xl">
-          {selectedExoplanet
-            ? `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`
-            : (selectedConstellation
-              ? `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`
-              : 'Estimated 100-400 billion stars • 100,000 light years in diameter')}
+          {selectedStar
+            ? `Constellation: ${selectedStar.constellation} • Magnitude: ${selectedStar.magnitude}`
+            : (selectedExoplanet
+              ? `${selectedExoplanet.host_star} • ${selectedExoplanet.distance_light_years} Light Years from Earth`
+              : (selectedConstellation
+                ? `${selectedConstellation.stars} Stars • ${selectedConstellation.distance} Light Years from Earth`
+                : 'Estimated 100-400 billion stars • 100,000 light years in diameter'))}
         </p>
       </div>
       <ControlPanel

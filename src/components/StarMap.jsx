@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
 
-const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines }, ref) => {
+const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, showConstellationLines, onStarClick }, ref) => {
   const mountRef = useRef(null);
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -13,6 +13,8 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
   const starsRef = useRef({});
   const exoplanetsRef = useRef({});
   const constellationLinesRef = useRef([]);
+  const raycasterRef = useRef(new THREE.Raycaster());
+  const mouseRef = useRef(new THREE.Vector2());
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
@@ -143,6 +145,7 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
           radius * Math.sin(phi) * Math.sin(theta)
         );
         
+        sphere.userData = star; // Store star data for raycasting
         scene.add(sphere);
 
         // Add star name label
@@ -155,15 +158,17 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     const addConstellationLines = () => {
       constellations.forEach((constellation) => {
         const stars = constellationStars.filter(star => star.constellation === constellation.name);
-        for (let i = 0; i < stars.length - 1; i++) {
-          const startStar = starsRef.current[stars[i].star_name].sphere;
-          const endStar = starsRef.current[stars[i + 1].star_name].sphere;
-          
-          const geometry = new THREE.BufferGeometry().setFromPoints([startStar.position, endStar.position]);
-          const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
-          const line = new THREE.Line(geometry, material);
-          scene.add(line);
-          constellationLinesRef.current.push(line);
+        for (let i = 0; i < stars.length; i++) {
+          for (let j = i + 1; j < stars.length; j++) {
+            const startStar = starsRef.current[stars[i].star_name].sphere;
+            const endStar = starsRef.current[stars[j].star_name].sphere;
+            
+            const geometry = new THREE.BufferGeometry().setFromPoints([startStar.position, endStar.position]);
+            const material = new THREE.LineBasicMaterial({ color: 0xff00ff });
+            const line = new THREE.Line(geometry, material);
+            scene.add(line);
+            constellationLinesRef.current.push(line);
+          }
         }
       });
     };
@@ -203,17 +208,40 @@ const StarMap = forwardRef(({ initialSkyboxUrl, showExoplanets, showStarNames, s
     };
     window.addEventListener('resize', handleResize);
 
+    const handleClick = (event) => {
+      event.preventDefault();
+      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+      const intersects = raycasterRef.current.intersectObjects(Object.values(starsRef.current).map(({ sphere }) => sphere));
+
+      if (intersects.length > 0) {
+        const clickedStar = intersects[0].object.userData;
+        onStarClick(clickedStar);
+        cameraRef.current.position.set(
+          intersects[0].object.position.x + 20,
+          intersects[0].object.position.y + 20,
+          intersects[0].object.position.z + 20
+        );
+        controlsRef.current.target.copy(intersects[0].object.position);
+        controlsRef.current.update();
+      }
+    };
+
+    window.addEventListener('click', handleClick);
+
     return () => {
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('click', handleClick);
       if (mountRef.current && rendererRef.current) {
         mountRef.current.removeChild(rendererRef.current.domElement);
       }
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [initialSkyboxUrl]);
+  }, [initialSkyboxUrl, onStarClick]);
 
-  // Update visibility of elements
   useEffect(() => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
       sphere.visible = showExoplanets;
