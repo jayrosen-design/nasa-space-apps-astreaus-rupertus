@@ -7,23 +7,27 @@ const StarMap = forwardRef((props, ref) => {
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
+  const rendererRef = useRef(null);
 
   useImperativeHandle(ref, () => ({
     navigateToCoordinates: (coords) => {
       if (cameraRef.current) {
         cameraRef.current.position.set(coords.x, coords.y, coords.z);
-        controlsRef.current.update();
+        controlsRef.current?.update();
       }
     }
   }));
 
   useEffect(() => {
+    if (!mountRef.current) return;
+
     // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     cameraRef.current = camera;
     const renderer = new THREE.WebGLRenderer();
+    rendererRef.current = renderer;
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
@@ -45,8 +49,9 @@ const StarMap = forwardRef((props, ref) => {
     controls.enablePan = true;
 
     // Animation
+    let animationFrameId;
     const animate = () => {
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
       controls.update();
       renderer.render(scene, camera);
     };
@@ -54,16 +59,27 @@ const StarMap = forwardRef((props, ref) => {
 
     // Resize handler
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
     };
     window.addEventListener('resize', handleResize);
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
-      mountRef.current.removeChild(renderer.domElement);
+      cancelAnimationFrame(animationFrameId);
+      if (mountRef.current && rendererRef.current) {
+        mountRef.current.removeChild(rendererRef.current.domElement);
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+      if (controlsRef.current) {
+        controlsRef.current.dispose();
+      }
     };
   }, []);
 
