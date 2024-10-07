@@ -3,7 +3,7 @@ import IframeComponent from '../components/IframeComponent';
 
 const ExoSpace = () => {
   return (
-    <div className="h-screen">
+    <div className="h-[calc(100vh-4rem)] mt-16">
       <IframeComponent />
     </div>
   );

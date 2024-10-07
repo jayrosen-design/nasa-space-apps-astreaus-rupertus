@@ -1,9 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTheme } from 'next-themes';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className={`fixed inset-y-0 left-0 w-64 bg-gray-800 text-white transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out z-50`}>
       <div className="p-4">
@@ -19,6 +26,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
           </ul>
         </nav>
+        <Button variant="ghost" onClick={toggleTheme} className="mt-4 text-white">
+          {theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+          <span className="ml-2">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </Button>
       </div>
     </div>
   );
