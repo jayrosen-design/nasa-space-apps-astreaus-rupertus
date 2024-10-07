@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { X, Moon, Sun } from 'lucide-react';
+import { X, Moon, Sun, Stars, Planet, Earth, Rocket, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 
@@ -19,11 +19,36 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </Button>
         <nav className="mt-8">
           <ul className="space-y-2">
-            <li><Link to="/constellations" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Constellations</Link></li>
-            <li><Link to="/exoplanets" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Exoplanets</Link></li>
-            <li><Link to="/kepler37d" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Kepler-37d</Link></li>
-            <li><Link to="/exospace" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Go to ExoSpace</Link></li>
-            <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
+            <li>
+              <Link to="/constellations" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
+                <Stars className="h-5 w-5 mr-2" />
+                Constellations
+              </Link>
+            </li>
+            <li>
+              <Link to="/exoplanets" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
+                <Planet className="h-5 w-5 mr-2" />
+                Exoplanets
+              </Link>
+            </li>
+            <li>
+              <Link to="/kepler37d" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
+                <Earth className="h-5 w-5 mr-2" />
+                Kepler-37d
+              </Link>
+            </li>
+            <li>
+              <Link to="/exospace" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
+                <Rocket className="h-5 w-5 mr-2" />
+                Go to ExoSpace
+              </Link>
+            </li>
+            <li>
+              <Link to="/about" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
+                <Info className="h-5 w-5 mr-2" />
+                About
+              </Link>
+            </li>
           </ul>
         </nav>
         <Button variant="ghost" onClick={toggleTheme} className="mt-4 text-white">
