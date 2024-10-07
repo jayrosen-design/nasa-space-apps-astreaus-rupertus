@@ -1,12 +1,12 @@
 import React, { useState, useRef } from 'react';
 import StarMap from '../components/StarMap';
 import ControlPanel from '../components/ControlPanel';
-import { skyboxOptions, constellations, constellationStars } from '../data/starMapData';
+import { skyboxOptions, constellations, constellationStars, exoplanets } from '../data/starMapData';
 
 const Constellations = () => {
-  const [showStarNames, setShowStarNames] = useState(false);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedStar, setSelectedStar] = useState(null);
+  const [selectedExoplanet, setSelectedExoplanet] = useState(null);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
     skyboxOptions.find(option => option.label === 'Sky 1'),
     skyboxOptions.find(option => option.label === 'Constellations')
@@ -18,6 +18,7 @@ const Constellations = () => {
     const constellation = constellations.find(c => c.name === constellationName);
     setSelectedConstellation(constellation);
     setSelectedStar(null);
+    setSelectedExoplanet(null);
     if (constellation && starMapRef.current) {
       starMapRef.current.navigateToCoordinates(constellation.coordinates);
     }
@@ -27,14 +28,25 @@ const Constellations = () => {
     const star = constellationStars.find(s => s.star_name === starName);
     setSelectedStar(star);
     setSelectedConstellation(null);
+    setSelectedExoplanet(null);
     if (star && starMapRef.current) {
       starMapRef.current.navigateToStar(star.star_name);
     }
   };
 
+  const handleExoplanetChange = (exoplanetName) => {
+    const exoplanet = exoplanets.find(e => e.exoplanet_name === exoplanetName);
+    setSelectedExoplanet(exoplanet);
+    setSelectedConstellation(null);
+    setSelectedStar(null);
+    if (exoplanet && starMapRef.current) {
+      starMapRef.current.navigateToExoplanet(exoplanet.exoplanet_name);
+    }
+  };
+
   return (
     <div className="h-screen relative">
-      {(selectedConstellation || selectedStar) && (
+      {(selectedConstellation || selectedStar || selectedExoplanet) && (
         <div className="absolute top-4 left-4 z-10 bg-background/80 p-4 rounded-lg shadow-lg max-w-md">
           {selectedConstellation && (
             <>
@@ -53,28 +65,37 @@ const Constellations = () => {
               <p className="text-xl">Magnitude: {selectedStar.magnitude}</p>
             </>
           )}
+          {selectedExoplanet && (
+            <>
+              <h2 className="text-4xl font-bold mb-2">{selectedExoplanet.exoplanet_name}</h2>
+              <p className="text-2xl mb-2">Host Star: {selectedExoplanet.host_star}</p>
+              <p className="text-xl mb-2">Distance: {selectedExoplanet.distance_light_years} Light Years</p>
+              <p className="text-xl">Planet Type: {selectedExoplanet.planet_type}</p>
+            </>
+          )}
         </div>
       )}
       <StarMap
         ref={starMapRef}
-        showExoplanets={false}
-        showStarNames={showStarNames}
+        showExoplanets={true}
+        showStarNames={false}
         showConstellationLines={false}
         activeSkyboxes={activeSkyboxes}
         isPaintMode={isPaintMode}
       />
       <ControlPanel
-        showStarNames={showStarNames}
-        setShowStarNames={setShowStarNames}
         selectedConstellation={selectedConstellation}
         selectedStar={selectedStar}
+        selectedExoplanet={selectedExoplanet}
         skyboxOptions={skyboxOptions}
         activeSkyboxes={activeSkyboxes}
         setActiveSkyboxes={setActiveSkyboxes}
         constellations={constellations}
         constellationStars={constellationStars}
+        exoplanets={exoplanets}
         onConstellationChange={handleConstellationChange}
         onConstellationStarChange={handleConstellationStarChange}
+        onExoplanetChange={handleExoplanetChange}
         isPaintMode={isPaintMode}
         setIsPaintMode={setIsPaintMode}
       />
