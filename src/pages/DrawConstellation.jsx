@@ -5,10 +5,9 @@ import { skyboxOptions } from '../data/starMapData';
 
 const DrawConstellation = () => {
   const [showExoplanets, setShowExoplanets] = useState(false);
-  const [showStarNames, setShowStarNames] = useState(true);
+  const [showStarNames, setShowStarNames] = useState(false);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
-    skyboxOptions.find(option => option.label === 'Sky 1'),
-    skyboxOptions.find(option => option.label === 'Constellations')
+    skyboxOptions.find(option => option.label === 'Sky 1')
   ]);
   const starMapRef = useRef(null);
 
@@ -27,7 +26,7 @@ const DrawConstellation = () => {
         setShowExoplanets={setShowExoplanets}
         showStarNames={showStarNames}
         setShowStarNames={setShowStarNames}
-        skyboxOptions={skyboxOptions.filter(option => option.label !== 'Paint Constellation Mode' && option.label !== 'Sky 2')}
+        skyboxOptions={skyboxOptions.filter(option => option.label === 'Sky 1')}
         activeSkyboxes={activeSkyboxes}
         setActiveSkyboxes={setActiveSkyboxes}
       />
