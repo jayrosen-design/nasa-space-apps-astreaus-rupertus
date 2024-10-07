@@ -5,7 +5,7 @@ import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 import IframeComponent from './IframeComponent';
 import { skyboxOptions } from '../data/starMapData';
 
-const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isPaintMode, initialObjects = [] }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isPaintMode, initialObjects = [], hideAllObjects = false }, ref) => {
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -79,7 +79,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   useEffect(() => {
     setupScene();
     animate();
-    createInitialObjects(initialObjects);
+    if (!hideAllObjects) {
+      createInitialObjects(initialObjects);
+    }
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -89,7 +91,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [setupScene, animate, handleResize, createInitialObjects, initialObjects]);
+  }, [setupScene, animate, handleResize, createInitialObjects, initialObjects, hideAllObjects]);
 
   useEffect(() => {
     const updateCanvasSize = () => {
@@ -144,17 +146,36 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   };
 
   const updateVisibility = () => {
-    Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
-      sphere.visible = showExoplanets;
-      label.visible = showExoplanets;
-    });
-    Object.values(starsRef.current).forEach(({ label }) => {
-      label.visible = showStarNames;
-    });
-    constellationLinesRef.current.forEach(line => {
-      line.visible = showConstellationLines;
-    });
+    if (hideAllObjects) {
+      Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
+        sphere.visible = false;
+        label.visible = false;
+      });
+      Object.values(starsRef.current).forEach(({ sphere, label }) => {
+        sphere.visible = false;
+        label.visible = false;
+      });
+      constellationLinesRef.current.forEach(line => {
+        line.visible = false;
+      });
+    } else {
+      Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
+        sphere.visible = showExoplanets;
+        label.visible = showExoplanets;
+      });
+      Object.values(starsRef.current).forEach(({ sphere, label }) => {
+        sphere.visible = true;
+        label.visible = showStarNames;
+      });
+      constellationLinesRef.current.forEach(line => {
+        line.visible = showConstellationLines;
+      });
+    }
   };
+
+  useEffect(() => {
+    updateVisibility();
+  }, [showExoplanets, showStarNames, showConstellationLines, hideAllObjects]);
 
   return (
     <div ref={mountRef} style={{ width: '100%', height: '100vh', position: 'relative' }}>

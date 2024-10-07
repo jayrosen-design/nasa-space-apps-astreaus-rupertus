@@ -4,8 +4,6 @@ import ControlPanel from '../components/ControlPanel';
 import { skyboxOptions } from '../data/starMapData';
 
 const DrawConstellation = () => {
-  const [showExoplanets, setShowExoplanets] = useState(false);
-  const [showStarNames, setShowStarNames] = useState(false);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
     skyboxOptions.find(option => option.label === 'Sky 1')
   ]);
@@ -15,17 +13,18 @@ const DrawConstellation = () => {
     <div className="h-screen relative">
       <StarMap
         ref={starMapRef}
-        showExoplanets={showExoplanets}
-        showStarNames={showStarNames}
+        showExoplanets={false}
+        showStarNames={false}
         showConstellationLines={false}
         activeSkyboxes={activeSkyboxes}
         isPaintMode={true}
+        hideAllObjects={true}  // New prop to hide all 3D objects
       />
       <ControlPanel
-        showExoplanets={showExoplanets}
-        setShowExoplanets={setShowExoplanets}
-        showStarNames={showStarNames}
-        setShowStarNames={setShowStarNames}
+        showExoplanets={false}
+        setShowExoplanets={() => {}}
+        showStarNames={false}
+        setShowStarNames={() => {}}
         skyboxOptions={skyboxOptions.filter(option => option.label === 'Sky 1')}
         activeSkyboxes={activeSkyboxes}
         setActiveSkyboxes={setActiveSkyboxes}
