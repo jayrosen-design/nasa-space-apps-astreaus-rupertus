@@ -8,7 +8,7 @@ import MobileNavbar from './components/MobileNavbar';
 import Sidebar from './components/Sidebar';
 import Constellations from './pages/Constellations';
 import Exoplanets from './pages/Exoplanets';
-import ExoSpace from './pages/ExoSpace';
+import ExoPlanetExplorer from './pages/ExoPlanetExplorer';
 import About from './pages/About';
 import Kepler37d from './pages/Kepler37d';
 import DrawConstellation from './pages/DrawConstellation';
@@ -34,7 +34,7 @@ const App = () => {
                   <Route path="/" element={<Navigate to="/constellations" replace />} />
                   <Route path="/constellations" element={<Constellations />} />
                   <Route path="/exoplanets" element={<Exoplanets />} />
-                  <Route path="/exospace" element={<ExoSpace />} />
+                  <Route path="/exo-planet-explorer" element={<ExoPlanetExplorer />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/kepler37d" element={<Kepler37d />} />
                   <Route path="/draw-constellation" element={<DrawConstellation />} />
