@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { useStarMapSetup } from '../hooks/useStarMapSetup';
 import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
-import IframeComponent from './IframeComponent';
 import { skyboxOptions } from '../data/starMapData';
 import { useStarMapVisibility } from '../hooks/useStarMapVisibility';
 import { useStarMapCanvas } from '../hooks/useStarMapCanvas';
