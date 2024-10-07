@@ -18,20 +18,14 @@ const ControlPanel = ({
   constellationStars,
   onConstellationChange,
   onConstellationStarChange,
-  isPaintMode,
-  setIsPaintMode,
 }) => {
   const handleSkyboxToggle = (skybox) => {
     playClickSound();
-    if (skybox.label === 'Paint Constellation Mode') {
-      setIsPaintMode(!isPaintMode);
-    } else {
-      setActiveSkyboxes(prev => 
-        prev.some(s => s.label === skybox.label)
-          ? prev.filter(s => s.label !== skybox.label)
-          : [...prev, skybox]
-      );
-    }
+    setActiveSkyboxes(prev => 
+      prev.some(s => s.label === skybox.label)
+        ? prev.filter(s => s.label !== skybox.label)
+        : [...prev, skybox]
+    );
   };
 
   return (
@@ -93,11 +87,11 @@ const ControlPanel = ({
 
         {skyboxOptions && skyboxOptions.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {skyboxOptions.map((option) => (
+            {skyboxOptions.filter(option => option.label !== 'Paint Constellation Mode' && option.label !== 'Sky 2').map((option) => (
               <div key={option.label} className="flex items-center space-x-2">
                 <Checkbox
                   id={`skybox-${option.label}`}
-                  checked={option.label === 'Paint Constellation Mode' ? isPaintMode : activeSkyboxes.some(skybox => skybox.label === option.label)}
+                  checked={activeSkyboxes.some(skybox => skybox.label === option.label)}
                   onCheckedChange={() => handleSkyboxToggle(option)}
                 />
                 <Label htmlFor={`skybox-${option.label}`}>{option.label}</Label>

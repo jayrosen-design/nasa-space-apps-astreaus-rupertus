@@ -59,7 +59,7 @@ export const useStarMapInteractions = (
       drawingContextRef.current = ctx;
       ctx.beginPath();
       ctx.moveTo(event.clientX, event.clientY);
-      ctx.strokeStyle = 'white';
+      ctx.strokeStyle = 'white';  // Changed to white
       ctx.lineWidth = 2;
     }
   }, [isDrawMode, canvasRef]);

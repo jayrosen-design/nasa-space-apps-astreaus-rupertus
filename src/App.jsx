@@ -11,6 +11,7 @@ import Exoplanets from './pages/Exoplanets';
 import ExoSpace from './pages/ExoSpace';
 import About from './pages/About';
 import Kepler37d from './pages/Kepler37d';
+import DrawConstellation from './pages/DrawConstellation';
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => {
                   <Route path="/exospace" element={<ExoSpace />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/kepler37d" element={<Kepler37d />} />
+                  <Route path="/draw-constellation" element={<DrawConstellation />} />
                 </Routes>
               </main>
             </div>

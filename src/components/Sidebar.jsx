@@ -23,6 +23,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <li><Link to="/exoplanets" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Exoplanets</Link></li>
             <li><Link to="/kepler37d" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Kepler-37d</Link></li>
             <li><Link to="/exospace" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Go to ExoSpace</Link></li>
+            <li><Link to="/draw-constellation" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Draw Constellation</Link></li>
             <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
           </ul>
         </nav>
