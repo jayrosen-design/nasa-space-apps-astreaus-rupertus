@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { X, Moon, Sun, Stars, Planet, Earth, Rocket, Info } from 'lucide-react';
+import { X, Moon, Sun, Stars, PlanetIcon, Earth, Rocket, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 
@@ -27,7 +27,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             </li>
             <li>
               <Link to="/exoplanets" className="flex items-center py-2 hover:bg-gray-700" onClick={toggleSidebar}>
-                <Planet className="h-5 w-5 mr-2" />
+                <PlanetIcon className="h-5 w-5 mr-2" />
                 Exoplanets
               </Link>
             </li>
