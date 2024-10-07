@@ -19,8 +19,10 @@ export const useStarMapCanvas = (
       }
       if (isPaintMode) {
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Clear the canvas instead of filling it with a semi-transparent black
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Set the composite operation to ensure new drawings don't affect the background
+        ctx.globalCompositeOperation = 'source-over';
       } else {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
