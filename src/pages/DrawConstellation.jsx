@@ -29,6 +29,7 @@ const DrawConstellation = () => {
         skyboxOptions={skyboxOptions.filter(option => option.label === 'Sky 1')}
         activeSkyboxes={activeSkyboxes}
         setActiveSkyboxes={setActiveSkyboxes}
+        isPaintMode={true}
       />
     </div>
   );
