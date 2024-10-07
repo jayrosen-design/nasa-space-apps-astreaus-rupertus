@@ -5,12 +5,8 @@ import { Label } from '@/components/ui/label';
 import { playClickSound } from '../utils/audio';
 
 const ControlPanel = ({
-  showExoplanets,
-  setShowExoplanets,
   showStarNames,
   setShowStarNames,
-  showConstellationLines,
-  setShowConstellationLines,
   selectedObject,
   selectedObjectType,
   skyboxOptions,
@@ -35,18 +31,6 @@ const ControlPanel = ({
       <div className="flex flex-wrap gap-4 justify-between items-center">
         <div className="flex items-center space-x-2">
           <Checkbox 
-            id="show-exoplanets" 
-            checked={showExoplanets} 
-            onCheckedChange={(checked) => {
-              playClickSound();
-              setShowExoplanets(checked);
-            }} 
-          />
-          <Label htmlFor="show-exoplanets">Show Exoplanets</Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
             id="show-star-names" 
             checked={showStarNames} 
             onCheckedChange={(checked) => {
@@ -55,18 +39,6 @@ const ControlPanel = ({
             }} 
           />
           <Label htmlFor="show-star-names">Show Star Names</Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="show-constellation-lines" 
-            checked={showConstellationLines} 
-            onCheckedChange={(checked) => {
-              playClickSound();
-              setShowConstellationLines(checked);
-            }} 
-          />
-          <Label htmlFor="show-constellation-lines">Show Constellation Lines</Label>
         </div>
 
         {constellations && (
