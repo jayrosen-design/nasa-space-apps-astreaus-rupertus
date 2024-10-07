@@ -5,7 +5,7 @@ export const useStarMapInteractions = (
   cameraRef,
   controlsRef,
   sceneRef,
-  rendererRef,  // Add rendererRef to the parameters
+  rendererRef,
   raycasterRef,
   mouseRef,
   starsRef,
@@ -24,11 +24,11 @@ export const useStarMapInteractions = (
       cameraRef.current.updateProjectionMatrix();
       rendererRef.current.setSize(window.innerWidth, window.innerHeight);
     }
-    if (canvasRef.current) {
+    if (canvasRef && canvasRef.current) {
       canvasRef.current.width = window.innerWidth;
       canvasRef.current.height = window.innerHeight;
     }
-  }, []);
+  }, [cameraRef, rendererRef, canvasRef]);
 
   const handleClick = useCallback((event) => {
     if (!isDrawMode) {
@@ -50,11 +50,13 @@ export const useStarMapInteractions = (
         }
       }
     }
-  }, [isDrawMode, onStarClick, onExoplanetClick]);
+  }, [isDrawMode, onStarClick, onExoplanetClick, mouseRef, raycasterRef, cameraRef, sceneRef]);
 
   const handlePointerDown = useCallback((event) => {
-    if (isDrawMode && canvasRef.current) {
-      setIsDrawing(true);
+    if (isDrawMode && canvasRef && canvasRef.current) {
+      if (typeof setIsDrawing === 'function') {
+        setIsDrawing(true);
+      }
       const ctx = canvasRef.current.getContext('2d');
       drawingContextRef.current = ctx;
       ctx.beginPath();
@@ -62,7 +64,7 @@ export const useStarMapInteractions = (
       ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
     }
-  }, [isDrawMode, setIsDrawing]);
+  }, [isDrawMode, canvasRef, setIsDrawing]);
 
   const handlePointerMove = useCallback((event) => {
     if (isDrawMode && drawingContextRef.current && event.buttons === 1) {
@@ -74,7 +76,9 @@ export const useStarMapInteractions = (
 
   const handlePointerUp = useCallback(() => {
     if (isDrawMode) {
-      setIsDrawing(false);
+      if (typeof setIsDrawing === 'function') {
+        setIsDrawing(false);
+      }
       drawingContextRef.current = null;
     }
   }, [isDrawMode, setIsDrawing]);
