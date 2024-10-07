@@ -18,6 +18,7 @@ const Constellations = () => {
   const handleConstellationChange = (constellationName) => {
     const constellation = constellations.find(c => c.name === constellationName);
     setSelectedConstellation(constellation);
+    setSelectedStar(null);
     if (constellation && starMapRef.current) {
       starMapRef.current.navigateToCoordinates(constellation.coordinates);
     }
@@ -26,6 +27,7 @@ const Constellations = () => {
   const handleConstellationStarChange = (starName) => {
     const star = constellationStars.find(s => s.star_name === starName);
     setSelectedStar(star);
+    setSelectedConstellation(null);
     if (star && starMapRef.current) {
       starMapRef.current.navigateToStar(star.star_name);
     }
@@ -33,6 +35,24 @@ const Constellations = () => {
 
   return (
     <div className="h-screen relative">
+      {(selectedConstellation || selectedStar) && (
+        <div className="absolute top-4 left-4 z-10 bg-background/80 p-4 rounded-lg shadow-lg max-w-sm">
+          {selectedConstellation && (
+            <>
+              <h2 className="text-xl font-bold mb-2">{selectedConstellation.name}</h2>
+              <p>{selectedConstellation.description}</p>
+            </>
+          )}
+          {selectedStar && (
+            <>
+              <h2 className="text-xl font-bold mb-2">{selectedStar.star_name}</h2>
+              <p>Constellation: {selectedStar.constellation}</p>
+              <p>Right Ascension: {selectedStar.ra}</p>
+              <p>Declination: {selectedStar.dec}</p>
+            </>
+          )}
+        </div>
+      )}
       <StarMap
         ref={starMapRef}
         showExoplanets={showExoplanets}
