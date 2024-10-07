@@ -128,7 +128,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       canvas.addEventListener('pointerup', handlePointerUp);
       canvas.addEventListener('pointerleave', handlePointerUp);
     }
-    window.addEventListener('click', handleClick);
+    if (!isPaintMode) {
+      window.addEventListener('click', handleClick);
+    }
   };
 
   const removeCanvasEventListeners = () => {

@@ -54,9 +54,7 @@ export const useStarMapInteractions = (
 
   const handlePointerDown = useCallback((event) => {
     if (isDrawMode && canvasRef && canvasRef.current) {
-      if (typeof setIsDrawing === 'function') {
-        setIsDrawing(true);
-      }
+      setIsDrawing(true);
       const ctx = canvasRef.current.getContext('2d');
       drawingContextRef.current = ctx;
       ctx.beginPath();
@@ -67,18 +65,19 @@ export const useStarMapInteractions = (
   }, [isDrawMode, canvasRef, setIsDrawing]);
 
   const handlePointerMove = useCallback((event) => {
-    if (isDrawMode && drawingContextRef.current && event.buttons === 1) {
+    if (isDrawMode && drawingContextRef.current && canvasRef.current) {
       const ctx = drawingContextRef.current;
-      ctx.lineTo(event.clientX, event.clientY);
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+      ctx.lineTo(x, y);
       ctx.stroke();
     }
   }, [isDrawMode]);
 
   const handlePointerUp = useCallback(() => {
     if (isDrawMode) {
-      if (typeof setIsDrawing === 'function') {
-        setIsDrawing(false);
-      }
+      setIsDrawing(false);
       drawingContextRef.current = null;
     }
   }, [isDrawMode, setIsDrawing]);
