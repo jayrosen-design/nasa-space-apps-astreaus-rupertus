@@ -73,12 +73,11 @@ export const useStarMapInteractions = (
       ctx.lineTo(x, y);
       ctx.stroke();
     }
-  }, [isDrawMode, isDrawing]);
+  }, [isDrawMode, isDrawing, canvasRef]);
 
   const handlePointerUp = useCallback(() => {
     if (isDrawMode) {
       setIsDrawing(false);
-      drawingContextRef.current = null;
     }
   }, [isDrawMode]);
 
@@ -88,6 +87,7 @@ export const useStarMapInteractions = (
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
-    isDrawing
+    isDrawing,
+    setIsDrawing
   };
 };

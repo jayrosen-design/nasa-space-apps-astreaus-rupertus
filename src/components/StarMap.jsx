@@ -8,7 +8,6 @@ import { skyboxOptions } from '../data/starMapData';
 const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isPaintMode, initialObjects = [] }, ref) => {
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
-  const [isDrawing, setIsDrawing] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [showIframe, setShowIframe] = useState(false);
 
@@ -19,10 +18,10 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   } = useStarMapSetup(mountRef, activeSkyboxes, autoplay, initialObjects);
 
   const {
-    handleResize, handleClick, handlePointerDown, handlePointerMove, handlePointerUp
+    handleResize, handleClick, handlePointerDown, handlePointerMove, handlePointerUp, isDrawing, setIsDrawing
   } = useStarMapInteractions(
     cameraRef, controlsRef, sceneRef, rendererRef, raycasterRef, mouseRef,
-    starsRef, exoplanetsRef, onObjectClick, isPaintMode, setIsDrawing, canvasRef
+    starsRef, exoplanetsRef, onObjectClick, onObjectClick, isPaintMode, canvasRef
   );
 
   useImperativeHandle(ref, () => ({
