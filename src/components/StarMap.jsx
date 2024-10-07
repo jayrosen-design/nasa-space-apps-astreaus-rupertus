@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
+import * as THREE from 'three';
 import { useStarMapSetup } from '../hooks/useStarMapSetup';
 import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 import { skyboxOptions } from '../data/starMapData';
