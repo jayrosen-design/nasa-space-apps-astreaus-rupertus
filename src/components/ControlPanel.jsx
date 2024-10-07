@@ -16,6 +16,10 @@ const ControlPanel = ({
   skyboxOptions,
   activeSkyboxes,
   setActiveSkyboxes,
+  constellations,
+  constellationStars,
+  onConstellationChange,
+  onConstellationStarChange,
 }) => {
   const handleSkyboxToggle = (skybox) => {
     playClickSound();
@@ -64,6 +68,36 @@ const ControlPanel = ({
           />
           <Label htmlFor="show-constellation-lines">Show Constellation Lines</Label>
         </div>
+
+        {constellations && (
+          <Select onValueChange={onConstellationChange}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select a constellation" />
+            </SelectTrigger>
+            <SelectContent>
+              {constellations.map((constellation) => (
+                <SelectItem key={constellation.name} value={constellation.name}>
+                  {constellation.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+
+        {constellationStars && (
+          <Select onValueChange={onConstellationStarChange}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select a star" />
+            </SelectTrigger>
+            <SelectContent>
+              {constellationStars.map((star) => (
+                <SelectItem key={star.star_name} value={star.star_name}>
+                  {star.star_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         {skyboxOptions && skyboxOptions.length > 0 && (
           <div className="flex flex-wrap gap-2">

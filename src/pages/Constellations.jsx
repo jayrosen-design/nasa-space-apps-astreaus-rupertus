@@ -2,10 +2,11 @@ import React, { useState, useRef } from 'react';
 import StarMap from '../components/StarMap';
 import ControlPanel from '../components/ControlPanel';
 import { skyboxOptions, constellations, constellationStars } from '../data/starMapData';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const Constellations = () => {
+  const [showExoplanets, setShowExoplanets] = useState(false);
   const [showStarNames, setShowStarNames] = useState(false);
+  const [showConstellationLines, setShowConstellationLines] = useState(true);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedStar, setSelectedStar] = useState(null);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
@@ -34,45 +35,27 @@ const Constellations = () => {
     <div className="h-screen relative">
       <StarMap
         ref={starMapRef}
-        showExoplanets={false}
+        showExoplanets={showExoplanets}
         showStarNames={showStarNames}
-        showConstellationLines={true}
+        showConstellationLines={showConstellationLines}
         activeSkyboxes={activeSkyboxes}
       />
-      <div className="absolute top-4 left-4 z-10 bg-background/80 p-4 rounded space-y-4">
-        <Select onValueChange={handleConstellationChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a constellation" />
-          </SelectTrigger>
-          <SelectContent>
-            {constellations.map((constellation) => (
-              <SelectItem key={constellation.name} value={constellation.name}>
-                {constellation.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select onValueChange={handleConstellationStarChange}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select a star" />
-          </SelectTrigger>
-          <SelectContent>
-            {constellationStars.map((star) => (
-              <SelectItem key={star.star_name} value={star.star_name}>
-                {star.star_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
       <ControlPanel
+        showExoplanets={showExoplanets}
+        setShowExoplanets={setShowExoplanets}
         showStarNames={showStarNames}
         setShowStarNames={setShowStarNames}
+        showConstellationLines={showConstellationLines}
+        setShowConstellationLines={setShowConstellationLines}
         selectedConstellation={selectedConstellation}
         selectedStar={selectedStar}
         skyboxOptions={skyboxOptions}
         activeSkyboxes={activeSkyboxes}
         setActiveSkyboxes={setActiveSkyboxes}
+        constellations={constellations}
+        constellationStars={constellationStars}
+        onConstellationChange={handleConstellationChange}
+        onConstellationStarChange={handleConstellationStarChange}
       />
     </div>
   );
