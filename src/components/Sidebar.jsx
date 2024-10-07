@@ -12,9 +12,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </Button>
         <nav className="mt-8">
           <ul className="space-y-2">
-            <li><Link to="/" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Kepler-37d</Link></li>
             <li><Link to="/constellations" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Constellations</Link></li>
             <li><Link to="/exoplanets" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Exoplanets</Link></li>
+            <li><Link to="/kepler37d" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Kepler-37d</Link></li>
             <li><Link to="/exospace" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Go to ExoSpace</Link></li>
             <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
           </ul>
