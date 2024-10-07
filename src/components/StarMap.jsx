@@ -5,7 +5,7 @@ import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 import IframeComponent from './IframeComponent';
 import { skyboxOptions } from '../data/starMapData';
 
-const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isDrawMode, initialObjects = [] }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isPaintMode, initialObjects = [] }, ref) => {
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -22,7 +22,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     handleResize, handleClick, handlePointerDown, handlePointerMove, handlePointerUp
   } = useStarMapInteractions(
     cameraRef, controlsRef, sceneRef, rendererRef, raycasterRef, mouseRef,
-    starsRef, exoplanetsRef, onObjectClick, isDrawMode, setIsDrawing, canvasRef
+    starsRef, exoplanetsRef, onObjectClick, isPaintMode, setIsDrawing, canvasRef
   );
 
   useImperativeHandle(ref, () => ({
@@ -107,19 +107,19 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   useEffect(() => {
     setupCanvasEventListeners();
     return removeCanvasEventListeners;
-  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
+  }, [isPaintMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
 
   const setupCanvasEventListeners = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = canvasSize.width;
       canvas.height = canvasSize.height;
-      canvas.style.pointerEvents = isDrawMode ? 'auto' : 'none';
-      canvas.style.zIndex = isDrawMode ? '1' : '0';
+      canvas.style.pointerEvents = isPaintMode ? 'auto' : 'none';
+      canvas.style.zIndex = isPaintMode ? '1' : '0';
       if (controlsRef.current) {
-        controlsRef.current.enabled = !isDrawMode;
+        controlsRef.current.enabled = !isPaintMode;
       }
-      if (!isDrawMode) {
+      if (!isPaintMode) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -166,8 +166,8 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
             left: 0,
             width: '100%',
             height: '100%',
-            pointerEvents: isDrawMode ? 'auto' : 'none',
-            zIndex: isDrawMode ? 1 : 0,
+            pointerEvents: isPaintMode ? 'auto' : 'none',
+            zIndex: isPaintMode ? 1 : 0,
           }}
         />
       ) : (

@@ -12,6 +12,7 @@ const Constellations = () => {
     skyboxOptions.find(option => option.label === 'Sky 1'),
     skyboxOptions.find(option => option.label === 'Constellations')
   ]);
+  const [isPaintMode, setIsPaintMode] = useState(false);
   const starMapRef = useRef(null);
 
   const handleConstellationChange = (constellationName) => {
@@ -38,6 +39,7 @@ const Constellations = () => {
         showStarNames={showStarNames}
         showConstellationLines={false}
         activeSkyboxes={activeSkyboxes}
+        isPaintMode={isPaintMode}
       />
       <ControlPanel
         showExoplanets={showExoplanets}
@@ -53,6 +55,8 @@ const Constellations = () => {
         constellationStars={constellationStars}
         onConstellationChange={handleConstellationChange}
         onConstellationStarChange={handleConstellationStarChange}
+        isPaintMode={isPaintMode}
+        setIsPaintMode={setIsPaintMode}
       />
     </div>
   );
