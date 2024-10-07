@@ -20,6 +20,10 @@ const Index = () => {
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
   const [isDrawMode, setIsDrawMode] = useState(false);
 
+  const handleGoToKepler37d = () => {
+    starMapRef.current?.toggleIframe();
+  };
+
   useEffect(() => {
     if (isBackgroundMusicPlaying) {
       playBackgroundMusic();
@@ -193,6 +197,7 @@ const Index = () => {
         isDrawMode={isDrawMode}
         setIsDrawMode={setIsDrawMode}
         handleSaveImage={handleSaveImage}
+        handleGoToKepler37d={handleGoToKepler37d}
       />
     </div>
   );

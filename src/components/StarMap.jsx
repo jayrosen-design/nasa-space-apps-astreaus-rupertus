@@ -8,6 +8,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [showIframe, setShowIframe] = useState(false);
 
   const {
     sceneRef,
@@ -37,7 +38,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     cameraRef,
     controlsRef,
     sceneRef,
-    rendererRef,  // Pass rendererRef to useStarMapInteractions
+    rendererRef,
     raycasterRef,
     mouseRef,
     starsRef,
@@ -98,6 +99,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       link.href = canvas.toDataURL('image/png');
       link.click();
     },
+    toggleIframe: () => setShowIframe(prev => !prev),
   }));
 
   useEffect(() => {
@@ -184,18 +186,36 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
 
   return (
     <div ref={mountRef} style={{ width: '100%', height: 'calc(100vh - 60px)', position: 'relative' }}>
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          pointerEvents: isDrawMode ? 'auto' : 'none',
-          zIndex: isDrawMode ? 1 : 0,
-        }}
-      />
+      {!showIframe ? (
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: isDrawMode ? 'auto' : 'none',
+            zIndex: isDrawMode ? 1 : 0,
+          }}
+        />
+      ) : (
+        <iframe
+          src="https://html-classic.itch.zone/html/11663271/RupertusBuild/index.html"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            border: 'none',
+          }}
+          allowTransparency="true"
+          allowFullScreen={true}
+          allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated; web-share"
+          scrolling="no"
+        />
+      )}
     </div>
   );
 });
