@@ -36,19 +36,22 @@ const Constellations = () => {
   return (
     <div className="h-screen relative">
       {(selectedConstellation || selectedStar) && (
-        <div className="absolute top-4 left-4 z-10 bg-background/80 p-4 rounded-lg shadow-lg max-w-sm">
+        <div className="absolute top-4 left-4 z-10 bg-background/80 p-4 rounded-lg shadow-lg max-w-md">
           {selectedConstellation && (
             <>
-              <h2 className="text-xl font-bold mb-2">{selectedConstellation.name}</h2>
-              <p>{selectedConstellation.description}</p>
+              <h2 className="text-4xl font-bold mb-2">{selectedConstellation.name}</h2>
+              <p className="text-2xl mb-2">{selectedConstellation.stars} Stars</p>
+              <p className="text-xl mb-2">{selectedConstellation.distance} Light Years Away</p>
+              <p className="text-lg">{selectedConstellation.description}</p>
             </>
           )}
           {selectedStar && (
             <>
-              <h2 className="text-xl font-bold mb-2">{selectedStar.star_name}</h2>
-              <p>Constellation: {selectedStar.constellation}</p>
-              <p>Right Ascension: {selectedStar.ra}</p>
-              <p>Declination: {selectedStar.dec}</p>
+              <h2 className="text-4xl font-bold mb-2">{selectedStar.star_name}</h2>
+              <p className="text-2xl mb-2">Constellation: {selectedStar.constellation}</p>
+              <p className="text-xl mb-2">Right Ascension: {selectedStar.ra}°</p>
+              <p className="text-xl mb-2">Declination: {selectedStar.dec}°</p>
+              <p className="text-xl">Magnitude: {selectedStar.magnitude}</p>
             </>
           )}
         </div>
