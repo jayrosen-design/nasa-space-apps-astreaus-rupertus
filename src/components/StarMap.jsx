@@ -2,6 +2,7 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } f
 import * as THREE from 'three';
 import { useStarMapSetup } from '../hooks/useStarMapSetup';
 import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
+import IframeComponent from './IframeComponent';
 
 const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes, isDrawMode }, ref) => {
   const mountRef = useRef(null);
@@ -134,23 +135,27 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   }, []);
 
   useEffect(() => {
+    setupCanvasEventListeners();
+    return () => removeCanvasEventListeners();
+  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
+
+  useEffect(() => {
+    updateVisibility();
+  }, [showExoplanets, showStarNames, showConstellationLines]);
+
+  const setupCanvasEventListeners = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = canvasSize.width;
       canvas.height = canvasSize.height;
 
-      if (isDrawMode) {
-        canvas.style.pointerEvents = 'auto';
-        canvas.style.zIndex = '1';
-        if (controlsRef.current) {
-          controlsRef.current.enabled = false;
-        }
-      } else {
-        canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = '0';
-        if (controlsRef.current) {
-          controlsRef.current.enabled = true;
-        }
+      canvas.style.pointerEvents = isDrawMode ? 'auto' : 'none';
+      canvas.style.zIndex = isDrawMode ? '1' : '0';
+      if (controlsRef.current) {
+        controlsRef.current.enabled = !isDrawMode;
+      }
+
+      if (!isDrawMode) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -162,19 +167,20 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     }
 
     window.addEventListener('click', handleClick);
+  };
 
-    return () => {
-      if (canvas) {
-        canvas.removeEventListener('pointerdown', handlePointerDown);
-        canvas.removeEventListener('pointermove', handlePointerMove);
-        canvas.removeEventListener('pointerup', handlePointerUp);
-        canvas.removeEventListener('pointerleave', handlePointerUp);
-      }
-      window.removeEventListener('click', handleClick);
-    };
-  }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
+  const removeCanvasEventListeners = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.removeEventListener('pointerdown', handlePointerDown);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerup', handlePointerUp);
+      canvas.removeEventListener('pointerleave', handlePointerUp);
+    }
+    window.removeEventListener('click', handleClick);
+  };
 
-  useEffect(() => {
+  const updateVisibility = () => {
     Object.values(exoplanetsRef.current).forEach(({ sphere, label }) => {
       sphere.visible = showExoplanets;
       label.visible = showExoplanets;
@@ -187,10 +193,10 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     constellationLinesRef.current.forEach(line => {
       line.visible = showConstellationLines;
     });
-  }, [showExoplanets, showStarNames, showConstellationLines]);
+  };
 
   return (
-    <div ref={mountRef} style={{ width: '100%', height: 'calc(100vh - 60px)', position: 'relative' }}>
+    <div ref={mountRef} style={{ width: '100%', height: '100vh', position: 'relative' }}>
       {!showIframe ? (
         <canvas
           ref={canvasRef}
@@ -205,21 +211,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
           }}
         />
       ) : (
-        <iframe
-          src="https://html-classic.itch.zone/html/11663271/RupertusBuild/index.html"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            border: 'none',
-          }}
-          allowTransparency="true"
-          allowFullScreen={true}
-          allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated; web-share"
-          scrolling="no"
-        />
+        <IframeComponent />
       )}
     </div>
   );

@@ -19,9 +19,11 @@ const Index = () => {
   const [activeSkyboxes, setActiveSkyboxes] = useState([skyboxOptions[0]]);
   const [isControlPanelVisible, setIsControlPanelVisible] = useState(true);
   const [isDrawMode, setIsDrawMode] = useState(false);
+  const [showIframe, setShowIframe] = useState(false);
 
   const handleGoToKepler37d = () => {
     starMapRef.current?.toggleIframe();
+    setShowIframe(prev => !prev);
   };
 
   useEffect(() => {
@@ -160,10 +162,12 @@ const Index = () => {
           isDrawMode={isDrawMode}
         />
       </div>
-      <div className="absolute top-0 left-0 right-0 p-4 text-center pointer-events-none">
-        <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-2">{getTitle()}</h1>
-        <p className="text-sm sm:text-base md:text-xl">{getDescription()}</p>
-      </div>
+      {!showIframe && (
+        <div className="absolute top-0 left-0 right-0 p-4 text-center pointer-events-none">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-2">{getTitle()}</h1>
+          <p className="text-sm sm:text-base md:text-xl">{getDescription()}</p>
+        </div>
+      )}
       <ControlPanel
         coordinates={coordinates}
         handleInputChange={handleInputChange}
