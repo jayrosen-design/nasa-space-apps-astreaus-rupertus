@@ -6,6 +6,7 @@ import { skyboxOptions, constellations, constellationStars } from '../data/starM
 const Constellations = () => {
   const [showExoplanets, setShowExoplanets] = useState(false);
   const [showStarNames, setShowStarNames] = useState(false);
+  const [showConstellationLines, setShowConstellationLines] = useState(false);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedStar, setSelectedStar] = useState(null);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
@@ -60,7 +61,7 @@ const Constellations = () => {
         ref={starMapRef}
         showExoplanets={showExoplanets}
         showStarNames={showStarNames}
-        showConstellationLines={false}
+        showConstellationLines={showConstellationLines}
         activeSkyboxes={activeSkyboxes}
         isPaintMode={isPaintMode}
       />
@@ -69,6 +70,8 @@ const Constellations = () => {
         setShowExoplanets={setShowExoplanets}
         showStarNames={showStarNames}
         setShowStarNames={setShowStarNames}
+        showConstellationLines={showConstellationLines}
+        setShowConstellationLines={setShowConstellationLines}
         selectedConstellation={selectedConstellation}
         selectedStar={selectedStar}
         skyboxOptions={skyboxOptions}
