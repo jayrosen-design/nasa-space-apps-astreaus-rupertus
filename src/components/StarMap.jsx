@@ -3,8 +3,9 @@ import * as THREE from 'three';
 import { useStarMapSetup } from '../hooks/useStarMapSetup';
 import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 import IframeComponent from './IframeComponent';
+import { skyboxOptions } from '../data/starMapData';
 
-const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes, isDrawMode }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isDrawMode }, ref) => {
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);

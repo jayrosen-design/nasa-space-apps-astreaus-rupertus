@@ -43,7 +43,7 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
   }, []);
 
   const updateSkyboxes = useCallback(() => {
-    if (sceneRef.current) {
+    if (sceneRef.current && Array.isArray(activeSkyboxes)) {
       Object.values(skyboxesRef.current).forEach(skybox => {
         sceneRef.current.remove(skybox);
       });
@@ -95,8 +95,10 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    updateSkyboxes();
-  }, [exoplanetObjects, exoplanetLabels, updateSkyboxes]);
+    if (Array.isArray(activeSkyboxes) && activeSkyboxes.length > 0) {
+      updateSkyboxes();
+    }
+  }, [exoplanetObjects, exoplanetLabels, updateSkyboxes, activeSkyboxes]);
 
   const animate = useCallback(() => {
     requestAnimationFrame(animate);
