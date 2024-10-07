@@ -105,6 +105,13 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     updateVisibility();
   }, [showExoplanets, showStarNames, showConstellationLines, hideAllObjects, updateVisibility]);
 
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.width = window.innerWidth;
+      canvasRef.current.height = window.innerHeight;
+    }
+  }, []);
+
   return (
     <div ref={mountRef} style={{ width: '100%', height: '100vh', position: 'relative' }}>
       <canvas

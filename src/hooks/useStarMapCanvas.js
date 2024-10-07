@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export const useStarMapCanvas = (
   canvasRef,
@@ -17,7 +17,11 @@ export const useStarMapCanvas = (
       if (controlsRef.current) {
         controlsRef.current.enabled = !isPaintMode;
       }
-      if (!isPaintMode) {
+      if (isPaintMode) {
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      } else {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
@@ -41,6 +45,13 @@ export const useStarMapCanvas = (
     }
     window.removeEventListener('click', handleClick);
   }, [canvasRef, handlePointerDown, handlePointerMove, handlePointerUp, handleClick]);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      canvasRef.current.width = window.innerWidth;
+      canvasRef.current.height = window.innerHeight;
+    }
+  }, [canvasRef]);
 
   return { setupCanvasEventListeners, removeCanvasEventListeners };
 };
