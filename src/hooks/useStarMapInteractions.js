@@ -5,6 +5,7 @@ export const useStarMapInteractions = (
   cameraRef,
   controlsRef,
   sceneRef,
+  rendererRef,  // Add rendererRef to the parameters
   raycasterRef,
   mouseRef,
   starsRef,

@@ -37,6 +37,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     cameraRef,
     controlsRef,
     sceneRef,
+    rendererRef,  // Pass rendererRef to useStarMapInteractions
     raycasterRef,
     mouseRef,
     starsRef,
