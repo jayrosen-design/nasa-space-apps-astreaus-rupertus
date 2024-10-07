@@ -13,44 +13,16 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   const [showIframe, setShowIframe] = useState(false);
 
   const {
-    sceneRef,
-    cameraRef,
-    controlsRef,
-    rendererRef,
-    skyboxesRef,
-    starsRef,
-    exoplanetsRef,
-    constellationLinesRef,
-    raycasterRef,
-    mouseRef,
-    setupScene,
-    animate,
-    updateSkyboxes,
-    zoomToObject,
-    createSkybox,
-    createInitialObjects
+    sceneRef, cameraRef, controlsRef, rendererRef, skyboxesRef, starsRef,
+    exoplanetsRef, constellationLinesRef, raycasterRef, mouseRef,
+    setupScene, animate, updateSkyboxes, zoomToObject, createSkybox, createInitialObjects
   } = useStarMapSetup(mountRef, activeSkyboxes, autoplay, initialObjects);
 
   const {
-    handleResize,
-    handleClick,
-    handlePointerDown,
-    handlePointerMove,
-    handlePointerUp
+    handleResize, handleClick, handlePointerDown, handlePointerMove, handlePointerUp
   } = useStarMapInteractions(
-    cameraRef,
-    controlsRef,
-    sceneRef,
-    rendererRef,
-    raycasterRef,
-    mouseRef,
-    starsRef,
-    exoplanetsRef,
-    onStarClick,
-    onExoplanetClick,
-    isDrawMode,
-    setIsDrawing,
-    canvasRef
+    cameraRef, controlsRef, sceneRef, rendererRef, raycasterRef, mouseRef,
+    starsRef, exoplanetsRef, onObjectClick, isDrawMode, setIsDrawing, canvasRef
   );
 
   useImperativeHandle(ref, () => ({
@@ -110,7 +82,6 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     animate();
     createInitialObjects(initialObjects);
     window.addEventListener('resize', handleResize);
-    
     return () => {
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && rendererRef.current) {
@@ -128,62 +99,35 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
         setCanvasSize({ width: rect.width, height: rect.height });
       }
     };
-
     updateCanvasSize();
     window.addEventListener('resize', updateCanvasSize);
-
-    return () => {
-      window.removeEventListener('resize', updateCanvasSize);
-    };
+    return () => window.removeEventListener('resize', updateCanvasSize);
   }, []);
 
   useEffect(() => {
     setupCanvasEventListeners();
-    return () => removeCanvasEventListeners();
+    return removeCanvasEventListeners;
   }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
-
-  const handleClick = (event) => {
-    if (!isDrawMode) {
-      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
-
-      const intersects = raycasterRef.current.intersectObjects(sceneRef.current.children);
-
-      for (let i = 0; i < intersects.length; i++) {
-        const object = intersects[i].object;
-        if (object.userData.clickable) {
-          onObjectClick(object.userData);
-          break;
-        }
-      }
-    }
-  };
 
   const setupCanvasEventListeners = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = canvasSize.width;
       canvas.height = canvasSize.height;
-
       canvas.style.pointerEvents = isDrawMode ? 'auto' : 'none';
       canvas.style.zIndex = isDrawMode ? '1' : '0';
       if (controlsRef.current) {
         controlsRef.current.enabled = !isDrawMode;
       }
-
       if (!isDrawMode) {
         const ctx = canvas.getContext('2d');
         ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-
       canvas.addEventListener('pointerdown', handlePointerDown);
       canvas.addEventListener('pointermove', handlePointerMove);
       canvas.addEventListener('pointerup', handlePointerUp);
       canvas.addEventListener('pointerleave', handlePointerUp);
     }
-
     window.addEventListener('click', handleClick);
   };
 
@@ -203,11 +147,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       sphere.visible = showExoplanets;
       label.visible = showExoplanets;
     });
-
     Object.values(starsRef.current).forEach(({ label }) => {
       label.visible = showStarNames;
     });
-
     constellationLinesRef.current.forEach(line => {
       line.visible = showConstellationLines;
     });
