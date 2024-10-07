@@ -10,9 +10,6 @@ const Index = () => {
   const [autoplay, setAutoplay] = useState(false);
   const [selectedObject, setSelectedObject] = useState(null);
   const [selectedObjectType, setSelectedObjectType] = useState(null);
-  const [showExoplanets, setShowExoplanets] = useState(true);
-  const [showStarNames, setShowStarNames] = useState(true);
-  const [showConstellationLines, setShowConstellationLines] = useState(false);
   const [isBackgroundMusicPlaying, setIsBackgroundMusicPlaying] = useState(false);
   const starMapRef = useRef(null);
   const { theme, setTheme } = useTheme();
@@ -32,8 +29,6 @@ const Index = () => {
     setSelectedObjectType(object.type);
     if (object.name === 'Kepler-37d' || object.name === 'Aldebaran') {
       navigate('/exospace');
-    } else if (starMapRef.current) {
-      starMapRef.current.navigateToObject(object.name);
     }
   };
 
@@ -54,24 +49,24 @@ const Index = () => {
       </div>
       <StarMap 
         ref={starMapRef} 
-        showExoplanets={showExoplanets}
-        showStarNames={showStarNames}
-        showConstellationLines={showConstellationLines}
+        showExoplanets={false}
+        showStarNames={false}
+        showConstellationLines={false}
         onObjectClick={handleObjectClick}
         autoplay={autoplay}
         activeSkyboxes={activeSkyboxes}
         initialObjects={[
-          { name: 'Kepler-37d', type: 'exoplanet', color: 'orange', size: 2 },
-          { name: 'Aldebaran', type: 'star', color: 'red', size: 5 }
+          { name: 'Kepler-37d', type: 'exoplanet', color: 'orange', size: 5 },
+          { name: 'Aldebaran', type: 'star', color: 'red', size: 8 }
         ]}
       />
       <ControlPanel
-        showExoplanets={showExoplanets}
-        setShowExoplanets={setShowExoplanets}
-        showStarNames={showStarNames}
-        setShowStarNames={setShowStarNames}
-        showConstellationLines={showConstellationLines}
-        setShowConstellationLines={setShowConstellationLines}
+        showExoplanets={false}
+        setShowExoplanets={() => {}}
+        showStarNames={false}
+        setShowStarNames={() => {}}
+        showConstellationLines={false}
+        setShowConstellationLines={() => {}}
         selectedObject={selectedObject}
         selectedObjectType={selectedObjectType}
         skyboxOptions={skyboxOptions}
