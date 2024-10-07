@@ -13,7 +13,8 @@ export const useStarMapInteractions = (
   onStarClick,
   onExoplanetClick,
   isDrawMode,
-  canvasRef
+  canvasRef,
+  paintColor
 ) => {
   const drawingContextRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -59,10 +60,10 @@ export const useStarMapInteractions = (
       drawingContextRef.current = ctx;
       ctx.beginPath();
       ctx.moveTo(event.clientX, event.clientY);
-      ctx.strokeStyle = 'white';  // Changed to white
+      ctx.strokeStyle = paintColor;
       ctx.lineWidth = 2;
     }
-  }, [isDrawMode, canvasRef]);
+  }, [isDrawMode, canvasRef, paintColor]);
 
   const handlePointerMove = useCallback((event) => {
     if (isDrawMode && isDrawing && drawingContextRef.current && canvasRef.current) {

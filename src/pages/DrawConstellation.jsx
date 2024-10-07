@@ -18,7 +18,8 @@ const DrawConstellation = () => {
         showConstellationLines={false}
         activeSkyboxes={activeSkyboxes}
         isPaintMode={true}
-        hideAllObjects={true}  // New prop to hide all 3D objects
+        hideAllObjects={true}
+        paintColor="white"
       />
       <ControlPanel
         showExoplanets={false}
