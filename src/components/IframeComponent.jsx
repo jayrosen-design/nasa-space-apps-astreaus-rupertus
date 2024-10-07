@@ -1,10 +1,15 @@
 import React from 'react';
+import { Button } from '@/components/ui/button';
 
 const IframeComponent = () => {
+  const openInBrowser = () => {
+    window.open('https://jayrosen.itch.io/astreaus-rupertus', '_blank');
+  };
+
   return (
-    <div className="absolute inset-0 w-full h-full bg-black">
+    <div className="absolute inset-0 w-full h-full bg-black flex flex-col">
       <iframe
-        src="https://html-classic.itch.zone/html/11663722/RupertusBuild2/index.html"
+        src="https://html-classic.itch.zone/html/11663927/RupertusBuild3/index.html"
         className="w-full h-full border-none"
         frameBorder="0"
         allowFullScreen={true}
@@ -16,6 +21,9 @@ const IframeComponent = () => {
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
       />
+      <div className="p-4 flex justify-center">
+        <Button onClick={openInBrowser}>Open in Browser</Button>
+      </div>
     </div>
   );
 };
