@@ -2,9 +2,9 @@ import { useRef, useCallback, useMemo } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { exoplanets, constellationStars, constellations } from '../data/starMapData';
-import { createExoplanets, createConstellationStars, createConstellationLines } from '../components/StarMapHelpers';
+import { createExoplanets, createConstellationStars, createConstellationLines, createLabel } from '../components/StarMapHelpers';
 
-export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
+export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay, initialObjects) => {
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const controlsRef = useRef(null);
@@ -17,6 +17,30 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
   const mouseRef = useRef(new THREE.Vector2());
 
   const { exoplanetObjects, exoplanetLabels } = useMemo(() => createExoplanets(exoplanets), []);
+
+  const createInitialObjects = useCallback((objects) => {
+    objects.forEach(object => {
+      const geometry = new THREE.SphereGeometry(object.size, 32, 32);
+      const material = new THREE.MeshBasicMaterial({ color: object.color });
+      const sphere = new THREE.Mesh(geometry, material);
+      
+      const phi = Math.acos(2 * Math.random() - 1);
+      const theta = 2 * Math.PI * Math.random();
+      const distance = Math.random() * 300 + 100;
+      sphere.position.set(
+        distance * Math.sin(phi) * Math.cos(theta),
+        distance * Math.sin(phi) * Math.sin(theta),
+        distance * Math.cos(phi)
+      );
+      
+      sphere.userData = { ...object, clickable: true };
+      sceneRef.current.add(sphere);
+
+      const label = createLabel(object.name, sphere.position, object.size);
+      sceneRef.current.add(label);
+    });
+  }, [sceneRef]);
+
 
   const createSkybox = useCallback((url, opacity = 1) => {
     const textureLoader = new THREE.TextureLoader();
@@ -114,6 +138,7 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
     rendererRef.current.render(sceneRef.current, cameraRef.current);
   }, [autoplay]);
 
+
   return {
     sceneRef,
     cameraRef,
@@ -130,5 +155,6 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay) => {
     updateSkyboxes,
     zoomToObject,
     createSkybox
+    createInitialObjects,
   };
 };

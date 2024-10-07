@@ -5,7 +5,7 @@ import { useStarMapInteractions } from '../hooks/useStarMapInteractions';
 import IframeComponent from './IframeComponent';
 import { skyboxOptions } from '../data/starMapData';
 
-const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onStarClick, onExoplanetClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isDrawMode }, ref) => {
+const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLines, onObjectClick, autoplay, activeSkyboxes = [skyboxOptions[0]], isDrawMode, initialObjects = [] }, ref) => {
   const mountRef = useRef(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -27,8 +27,9 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     animate,
     updateSkyboxes,
     zoomToObject,
-    createSkybox
-  } = useStarMapSetup(mountRef, activeSkyboxes, autoplay);
+    createSkybox,
+    createInitialObjects
+  } = useStarMapSetup(mountRef, activeSkyboxes, autoplay, initialObjects);
 
   const {
     handleResize,
@@ -107,6 +108,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
   useEffect(() => {
     setupScene();
     animate();
+    createInitialObjects(initialObjects);
     window.addEventListener('resize', handleResize);
     
     return () => {
@@ -117,7 +119,7 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
       rendererRef.current?.dispose();
       controlsRef.current?.dispose();
     };
-  }, [setupScene, animate, handleResize]);
+  }, [setupScene, animate, handleResize, createInitialObjects, initialObjects]);
 
   useEffect(() => {
     const updateCanvasSize = () => {
@@ -140,9 +142,24 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
     return () => removeCanvasEventListeners();
   }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
 
-  useEffect(() => {
-    updateVisibility();
-  }, [showExoplanets, showStarNames, showConstellationLines]);
+  const handleClick = (event) => {
+    if (!isDrawMode) {
+      mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseRef.current.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+      raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+
+      const intersects = raycasterRef.current.intersectObjects(sceneRef.current.children);
+
+      for (let i = 0; i < intersects.length; i++) {
+        const object = intersects[i].object;
+        if (object.userData.clickable) {
+          onObjectClick(object.userData);
+          break;
+        }
+      }
+    }
+  };
 
   const setupCanvasEventListeners = () => {
     const canvas = canvasRef.current;
