@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export const useStarMapInteractions = (
@@ -13,10 +13,10 @@ export const useStarMapInteractions = (
   onStarClick,
   onExoplanetClick,
   isDrawMode,
-  setIsDrawing,
   canvasRef
 ) => {
   const drawingContextRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const handleResize = useCallback(() => {
     if (cameraRef.current && rendererRef.current) {
@@ -62,10 +62,10 @@ export const useStarMapInteractions = (
       ctx.strokeStyle = 'white';
       ctx.lineWidth = 2;
     }
-  }, [isDrawMode, canvasRef, setIsDrawing]);
+  }, [isDrawMode, canvasRef]);
 
   const handlePointerMove = useCallback((event) => {
-    if (isDrawMode && drawingContextRef.current && canvasRef.current) {
+    if (isDrawMode && isDrawing && drawingContextRef.current && canvasRef.current) {
       const ctx = drawingContextRef.current;
       const rect = canvasRef.current.getBoundingClientRect();
       const x = event.clientX - rect.left;
@@ -73,20 +73,21 @@ export const useStarMapInteractions = (
       ctx.lineTo(x, y);
       ctx.stroke();
     }
-  }, [isDrawMode]);
+  }, [isDrawMode, isDrawing]);
 
   const handlePointerUp = useCallback(() => {
     if (isDrawMode) {
       setIsDrawing(false);
       drawingContextRef.current = null;
     }
-  }, [isDrawMode, setIsDrawing]);
+  }, [isDrawMode]);
 
   return {
     handleResize,
     handleClick,
     handlePointerDown,
     handlePointerMove,
-    handlePointerUp
+    handlePointerUp,
+    isDrawing
   };
 };
