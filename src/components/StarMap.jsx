@@ -135,36 +135,41 @@ const StarMap = forwardRef(({ showExoplanets, showStarNames, showConstellationLi
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    canvas.width = canvasSize.width;
-    canvas.height = canvasSize.height;
+    if (canvas) {
+      canvas.width = canvasSize.width;
+      canvas.height = canvasSize.height;
 
-    if (isDrawMode) {
-      canvas.style.pointerEvents = 'auto';
-      canvas.style.zIndex = '1';
-      if (controlsRef.current) {
-        controlsRef.current.enabled = false;
+      if (isDrawMode) {
+        canvas.style.pointerEvents = 'auto';
+        canvas.style.zIndex = '1';
+        if (controlsRef.current) {
+          controlsRef.current.enabled = false;
+        }
+      } else {
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '0';
+        if (controlsRef.current) {
+          controlsRef.current.enabled = true;
+        }
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
       }
-    } else {
-      canvas.style.pointerEvents = 'none';
-      canvas.style.zIndex = '0';
-      if (controlsRef.current) {
-        controlsRef.current.enabled = true;
-      }
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      canvas.addEventListener('pointerdown', handlePointerDown);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerup', handlePointerUp);
+      canvas.addEventListener('pointerleave', handlePointerUp);
     }
 
-    canvas.addEventListener('pointerdown', handlePointerDown);
-    canvas.addEventListener('pointermove', handlePointerMove);
-    canvas.addEventListener('pointerup', handlePointerUp);
-    canvas.addEventListener('pointerleave', handlePointerUp);
     window.addEventListener('click', handleClick);
 
     return () => {
-      canvas.removeEventListener('pointerdown', handlePointerDown);
-      canvas.removeEventListener('pointermove', handlePointerMove);
-      canvas.removeEventListener('pointerup', handlePointerUp);
-      canvas.removeEventListener('pointerleave', handlePointerUp);
+      if (canvas) {
+        canvas.removeEventListener('pointerdown', handlePointerDown);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerup', handlePointerUp);
+        canvas.removeEventListener('pointerleave', handlePointerUp);
+      }
       window.removeEventListener('click', handleClick);
     };
   }, [isDrawMode, handlePointerDown, handlePointerMove, handlePointerUp, handleClick, canvasSize]);
