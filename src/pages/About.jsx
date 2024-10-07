@@ -12,7 +12,7 @@ const About = () => {
           frameBorder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
-          className="w-full h-full rounded-lg shadow-lg"
+          className="w-full h-[640px] rounded-lg shadow-lg"
         ></iframe>
       </div>
 
@@ -46,9 +46,10 @@ const About = () => {
         </CardContent>
       </Card>
 
+      <h3 className="text-2xl font-bold mb-4">ExoSpace - Draw Your Own Constellations</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <img src="https://i.imgur.com/LxRzxQw.jpeg" alt="Exosky Explorer" className="w-full h-auto rounded-lg shadow-lg" />
-        <img src="https://i.imgur.com/UQnAvF8.png" alt="Star Map Visualization" className="w-full h-auto rounded-lg shadow-lg" />
+        <img src="https://i.imgur.com/IjlxBB3.jpeg" alt="ExoSpace Constellation Drawing" className="w-full h-auto rounded-lg shadow-lg" />
       </div>
 
       <Card className="mb-8">
