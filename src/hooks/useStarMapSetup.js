@@ -138,7 +138,6 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay, initialObjec
     rendererRef.current.render(sceneRef.current, cameraRef.current);
   }, [autoplay]);
 
-
   return {
     sceneRef,
     cameraRef,
@@ -154,7 +153,7 @@ export const useStarMapSetup = (mountRef, activeSkyboxes, autoplay, initialObjec
     animate,
     updateSkyboxes,
     zoomToObject,
-    createSkybox
-    createInitialObjects,
+    createSkybox,
+    createInitialObjects
   };
 };
