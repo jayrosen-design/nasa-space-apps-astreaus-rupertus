@@ -29,37 +29,41 @@ const ControlPanel = ({
           <Label htmlFor="show-exoplanets">Show Exoplanets</Label>
         </div>
 
-        <Select 
-          onValueChange={handleExoplanetChange} 
-          value={selectedExoplanet?.exoplanet_name || ''}
-        >
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select Exoplanet" />
-          </SelectTrigger>
-          <SelectContent>
-            {exoplanets.map((exoplanet) => (
-              <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
-                {exoplanet.exoplanet_name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {exoplanets && exoplanets.length > 0 && (
+          <Select 
+            onValueChange={handleExoplanetChange} 
+            value={selectedExoplanet?.exoplanet_name || ''}
+          >
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Select Exoplanet" />
+            </SelectTrigger>
+            <SelectContent>
+              {exoplanets.map((exoplanet) => (
+                <SelectItem key={exoplanet.exoplanet_name} value={exoplanet.exoplanet_name}>
+                  {exoplanet.exoplanet_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
-        <div className="flex flex-wrap gap-2">
-          {skyboxOptions.map((option) => (
-            <div key={option.label} className="flex items-center space-x-2">
-              <Checkbox
-                id={`skybox-${option.label}`}
-                checked={activeSkyboxes.some(skybox => skybox.label === option.label)}
-                onCheckedChange={(checked) => {
-                  playClickSound();
-                  handleSkyboxToggle(option, checked);
-                }}
-              />
-              <Label htmlFor={`skybox-${option.label}`}>{option.label}</Label>
-            </div>
-          ))}
-        </div>
+        {skyboxOptions && skyboxOptions.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {skyboxOptions.map((option) => (
+              <div key={option.label} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`skybox-${option.label}`}
+                  checked={activeSkyboxes.some(skybox => skybox.label === option.label)}
+                  onCheckedChange={(checked) => {
+                    playClickSound();
+                    handleSkyboxToggle(option, checked);
+                  }}
+                />
+                <Label htmlFor={`skybox-${option.label}`}>{option.label}</Label>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
