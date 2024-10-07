@@ -27,6 +27,7 @@ export const zoomOptions = [
 ];
 
 export const exoplanets = [
+  { exoplanet_name: 'Kepler-37d', host_star: 'Kepler-37', distance_light_years: 209, planet_type: 'Super-Earth' },
   { exoplanet_name: 'Proxima Centauri b', host_star: 'Proxima Centauri', distance_light_years: 4.24, planet_type: 'Rocky' },
   { exoplanet_name: 'TRAPPIST-1e', host_star: 'TRAPPIST-1', distance_light_years: 39.5, planet_type: 'Rocky' },
   { exoplanet_name: 'Kepler-186f', host_star: 'Kepler-186', distance_light_years: 582, planet_type: 'Rocky' },
