@@ -30,7 +30,7 @@ const Kepler37d = () => {
       </div>
       <StarMap 
         ref={starMapRef} 
-        showExoplanets={true}
+        showExoplanets={false}
         showStarNames={false}
         showConstellationLines={false}
         onObjectClick={handleObjectClick}
@@ -40,12 +40,10 @@ const Kepler37d = () => {
         ]}
       />
       <ControlPanel
-        showExoplanets={true}
+        showExoplanets={false}
         setShowExoplanets={() => {}}
         showStarNames={false}
         setShowStarNames={() => {}}
-        showConstellationLines={false}
-        setShowConstellationLines={() => {}}
         selectedObject={selectedObject}
         skyboxOptions={skyboxOptions}
         activeSkyboxes={activeSkyboxes}

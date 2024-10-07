@@ -6,7 +6,6 @@ import { skyboxOptions, constellations, constellationStars } from '../data/starM
 const Constellations = () => {
   const [showExoplanets, setShowExoplanets] = useState(false);
   const [showStarNames, setShowStarNames] = useState(false);
-  const [showConstellationLines, setShowConstellationLines] = useState(true);
   const [selectedConstellation, setSelectedConstellation] = useState(null);
   const [selectedStar, setSelectedStar] = useState(null);
   const [activeSkyboxes, setActiveSkyboxes] = useState([
@@ -37,7 +36,7 @@ const Constellations = () => {
         ref={starMapRef}
         showExoplanets={showExoplanets}
         showStarNames={showStarNames}
-        showConstellationLines={showConstellationLines}
+        showConstellationLines={false}
         activeSkyboxes={activeSkyboxes}
       />
       <ControlPanel
@@ -45,8 +44,6 @@ const Constellations = () => {
         setShowExoplanets={setShowExoplanets}
         showStarNames={showStarNames}
         setShowStarNames={setShowStarNames}
-        showConstellationLines={showConstellationLines}
-        setShowConstellationLines={setShowConstellationLines}
         selectedConstellation={selectedConstellation}
         selectedStar={selectedStar}
         skyboxOptions={skyboxOptions}

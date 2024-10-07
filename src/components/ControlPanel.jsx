@@ -9,8 +9,6 @@ const ControlPanel = ({
   setShowExoplanets,
   showStarNames,
   setShowStarNames,
-  showConstellationLines,
-  setShowConstellationLines,
   selectedObject,
   selectedObjectType,
   skyboxOptions,
@@ -55,18 +53,6 @@ const ControlPanel = ({
             }} 
           />
           <Label htmlFor="show-star-names">Show Star Names</Label>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox 
-            id="show-constellation-lines" 
-            checked={showConstellationLines} 
-            onCheckedChange={(value) => {
-              playClickSound();
-              setShowConstellationLines(value);
-            }} 
-          />
-          <Label htmlFor="show-constellation-lines">Show Constellation Lines</Label>
         </div>
 
         {constellations && (
