@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import StarMap from '../components/StarMap';
 import ControlPanel from '../components/ControlPanel';
 import { skyboxOptions, constellations, constellationStars, exoplanets } from '../data/starMapData';
@@ -13,6 +13,17 @@ const Constellations = () => {
   ]);
   const [isPaintMode, setIsPaintMode] = useState(false);
   const starMapRef = useRef(null);
+
+  useEffect(() => {
+    // Automatically select Kepler-37d when the component mounts
+    const kepler37d = exoplanets.find(e => e.exoplanet_name === 'Kepler-37d');
+    if (kepler37d) {
+      setSelectedExoplanet(kepler37d);
+      if (starMapRef.current) {
+        starMapRef.current.navigateToExoplanet('Kepler-37d');
+      }
+    }
+  }, []);
 
   const handleConstellationChange = (constellationName) => {
     const constellation = constellations.find(c => c.name === constellationName);
