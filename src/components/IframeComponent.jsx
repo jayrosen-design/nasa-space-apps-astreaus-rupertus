@@ -9,7 +9,7 @@ const IframeComponent = () => {
   return (
     <div className="absolute inset-0 w-full h-full bg-black flex flex-col">
       <iframe
-        src="https://html-classic.itch.zone/html/11663927/RupertusBuild3/index.html"
+        src="https://html-classic.itch.zone/html/11740464/RupertusMaximus1/index.html"
         className="w-full h-full border-none"
         frameBorder="0"
         allowFullScreen={true}
