@@ -23,6 +23,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <li><Link to="/draw-constellation" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Draw Constellation</Link></li>
             <li><Link to="/ruperts-downloads" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Rupert's Downloads</Link></li>
             <li><Link to="/exo-planet-explorer" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Exo-Planet Explorer</Link></li>
+            <li><a href="https://www.spaceappschallenge.org/nasa-space-apps-2024/find-a-team/astreaus-rupertus/" target="_blank" rel="noopener noreferrer" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>NASA Space Apps</a></li>
             <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
           </ul>
         </nav>
