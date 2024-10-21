@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -7,7 +7,6 @@ import { ThemeProvider } from "next-themes";
 import MobileNavbar from './components/MobileNavbar';
 import Sidebar from './components/Sidebar';
 import Constellations from './pages/Constellations';
-import Exoplanets from './pages/Exoplanets';
 import ExoPlanetExplorer from './pages/ExoPlanetExplorer';
 import About from './pages/About';
 import Kepler37d from './pages/Kepler37d';
@@ -18,6 +17,18 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024); // Assuming 1024px as the breakpoint for large screens
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -29,13 +40,12 @@ const App = () => {
           <BrowserRouter>
             <div className="relative min-h-screen bg-background text-foreground">
               <MobileNavbar toggleSidebar={toggleSidebar} />
-              <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-              <main className="pt-16">
+              <Sidebar isOpen={isLargeScreen || isSidebarOpen} toggleSidebar={toggleSidebar} />
+              <main className={`pt-16 ${isLargeScreen ? 'ml-64' : ''}`}>
                 <Routes>
-                  <Route path="/" element={<Navigate to="/constellations" replace />} />
-                  <Route path="/constellations" element={<Constellations />} />
-                  <Route path="/exoplanets" element={<Exoplanets />} />
+                  <Route path="/" element={<Navigate to="/exo-planet-explorer" replace />} />
                   <Route path="/exo-planet-explorer" element={<ExoPlanetExplorer />} />
+                  <Route path="/constellations" element={<Constellations />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/kepler37d" element={<Kepler37d />} />
                   <Route path="/draw-constellation" element={<DrawConstellation />} />
