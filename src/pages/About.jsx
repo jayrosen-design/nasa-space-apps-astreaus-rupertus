@@ -22,7 +22,7 @@ const About = () => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="w-full h-[640px] rounded-lg shadow-lg"
+            className="w-full h-full rounded-lg shadow-lg"
           ></iframe>
         </div>
         <div className="aspect-w-16 aspect-h-9">
@@ -31,7 +31,7 @@ const About = () => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="w-full h-[640px] rounded-lg shadow-lg"
+            className="w-full h-full rounded-lg shadow-lg"
           ></iframe>
         </div>
       </div>
