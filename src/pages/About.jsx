@@ -16,7 +16,7 @@ const About = () => {
       <h2 className="text-3xl font-bold mb-6">About Astreaus Rupertus</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="aspect-w-16 aspect-h-9">
+        <div className="aspect-w-16 aspect-h-9 h-[480px]">
           <iframe
             src="https://www.youtube.com/embed/nasR1Y9SotQ"
             frameBorder="0"
@@ -25,7 +25,7 @@ const About = () => {
             className="w-full h-full rounded-lg shadow-lg"
           ></iframe>
         </div>
-        <div className="aspect-w-16 aspect-h-9">
+        <div className="aspect-w-16 aspect-h-9 h-[480px]">
           <iframe
             src="https://www.youtube.com/embed/wyHuolYbA-k"
             frameBorder="0"
