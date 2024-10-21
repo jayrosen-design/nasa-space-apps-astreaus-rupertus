@@ -15,14 +15,25 @@ const About = () => {
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6">About Astreaus Rupertus</h2>
       
-      <div className="aspect-w-16 aspect-h-9 mb-8">
-        <iframe
-          src="https://www.youtube.com/embed/nasR1Y9SotQ"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          className="w-full h-[640px] rounded-lg shadow-lg"
-        ></iframe>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="aspect-w-16 aspect-h-9">
+          <iframe
+            src="https://www.youtube.com/embed/nasR1Y9SotQ"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full rounded-lg shadow-lg"
+          ></iframe>
+        </div>
+        <div className="aspect-w-16 aspect-h-9">
+          <iframe
+            src="https://www.youtube.com/embed/wyHuolYbA-k"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            className="w-full h-full rounded-lg shadow-lg"
+          ></iframe>
+        </div>
       </div>
 
       <AboutSection title="Exploring the Exosky with Rupert">
