@@ -21,6 +21,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <ul className="space-y-2">
             <li><Link to="/constellations" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Star Map</Link></li>
             <li><Link to="/draw-constellation" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Draw Constellation</Link></li>
+            <li><Link to="/ruperts-downloads" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Rupert's Downloads</Link></li>
             <li><Link to="/exo-planet-explorer" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>Exo-Planet Explorer</Link></li>
             <li><Link to="/about" className="block py-2 hover:bg-gray-700" onClick={toggleSidebar}>About</Link></li>
           </ul>

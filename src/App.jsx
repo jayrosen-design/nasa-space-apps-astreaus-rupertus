@@ -12,6 +12,7 @@ import ExoPlanetExplorer from './pages/ExoPlanetExplorer';
 import About from './pages/About';
 import Kepler37d from './pages/Kepler37d';
 import DrawConstellation from './pages/DrawConstellation';
+import RupertsDownloads from './pages/RupertsDownloads';
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => {
                   <Route path="/about" element={<About />} />
                   <Route path="/kepler37d" element={<Kepler37d />} />
                   <Route path="/draw-constellation" element={<DrawConstellation />} />
+                  <Route path="/ruperts-downloads" element={<RupertsDownloads />} />
                 </Routes>
               </main>
             </div>
