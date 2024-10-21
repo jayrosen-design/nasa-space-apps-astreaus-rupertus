@@ -22,7 +22,7 @@ const About = () => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="w-full h-full rounded-lg shadow-lg"
+            className="w-full h-[640px] rounded-lg shadow-lg"
           ></iframe>
         </div>
         <div className="aspect-w-16 aspect-h-9">
@@ -31,7 +31,7 @@ const About = () => {
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            className="w-full h-full rounded-lg shadow-lg"
+            className="w-full h-[640px] rounded-lg shadow-lg"
           ></iframe>
         </div>
       </div>
@@ -77,6 +77,20 @@ const About = () => {
           <li>ChatGPT & GitHub Copilot: Assistance in development and asset generation</li>
           <li>Suno & Audacity: Audio generation and editing</li>
         </ul>
+      </AboutSection>
+
+      <AboutSection title="In the News">
+        <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
+          <img src="https://i.imgur.com/pECxY7K.jpeg" alt="Hometown News Article" className="w-full md:w-1/2 h-auto rounded-lg shadow-lg" />
+          <div>
+            <p className="font-semibold">
+              <a href="https://www.hometownnewsbrevard.com/eedition/page-08/page_e36ec591-c639-5f5b-b983-8e90bb3a8356.html?fbclid=IwY2xjawGDmRFleHRuA2FlbQIxMAABHa7Lr8N8t3-KWFiZDljs8HKtujI9lzcWGb5-OHJSd3YV5RIsLC8rA_O2rg_aem_JiTPllj1OM6rpAzUwPvmHA" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+                Hometown News. "Innovators Unite and Inspire"
+              </a>
+            </p>
+            <p className="text-sm text-gray-600">Oct. 11, 2024</p>
+          </div>
+        </div>
       </AboutSection>
 
       <AboutSection title="Team">
