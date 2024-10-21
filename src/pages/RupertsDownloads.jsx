@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const images = [
   'https://i.imgur.com/wpLe5ia.png',
@@ -17,13 +18,23 @@ const images = [
 const RupertsDownloads = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleDownload = (imageUrl) => {
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = 'rupert-image.png';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async (imageUrl) => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = 'rupert-image.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+      toast.success("Image downloaded successfully!");
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      toast.error("Failed to download image. Please try again.");
+    }
   };
 
   return (
