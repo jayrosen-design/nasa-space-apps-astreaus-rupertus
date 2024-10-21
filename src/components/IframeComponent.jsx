@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 const IframeComponent = () => {
-  const openInBrowser = () => {
+  const openInNewWindow = () => {
     window.open('https://jayrosen.itch.io/astreaus-rupertus', '_blank');
   };
 
@@ -22,7 +22,7 @@ const IframeComponent = () => {
         mozallowfullscreen="true"
       />
       <div className="p-4 flex justify-center">
-        <Button onClick={openInBrowser}>Open in Browser</Button>
+        <Button onClick={openInNewWindow}>Open in new window</Button>
       </div>
     </div>
   );
