@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/868495675.svg)](https://doi.org/10.5281/zenodo.14739316)
+
 # **Astreaus Rupertus**
 ### *NASA Space Apps Challenge 2024*
 - **Global Nominee**: Cape Canaveral, FL - Space Force Museum  
