@@ -1,70 +1,72 @@
-# Welcome to your GPT Engineer project
+# **Astreaus Rupertus**
+### *NASA Space Apps Challenge 2024*
+- **Global Nominee**: Cape Canaveral, FL - Space Force Museum  
+- **Award**: Galactic Problem Solver  
 
-## Project info
+---
 
-**URL**: https://run.gptengineer.app/projects/ae2c240e-75d6-49d4-86b4-13e230b00a96/improve
+## **Exploring the Exosky with Rupert**
+- **Live App**: [Astreaus Rupertus Web App](https://nasa-space-apps-astreaus-rupertus.gptengineer.run/)  
+- **Itch.io Page**: [Astreaus Rupertus on Itch.io](https://jayrosen.itch.io/astreaus-rupertus)  
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## **Video Demos**
+1. [Overview of Astreaus Rupertus](https://youtu.be/wyHuolYbA-k)  
+2. [Interactive Features Explained](https://youtu.be/nasR1Y9SotQ)  
 
-**Use GPT Engineer**
+---
 
-Simply visit the GPT Engineer project at [GPT Engineer](https://gptengineer.app/projects/ae2c240e-75d6-49d4-86b4-13e230b00a96/improve) and start prompting.
+## **Project Overview**
+Our team, *Astreaus Rupertus*, developed a web application for the **NASA Space Apps Challenge 2024**, enabling users to explore the night sky from the perspective of over 5,500 known exoplanets. This interactive tool provides an educational and immersive experience for kids, students, and space enthusiasts.
 
-Changes made via gptengineer.app will be committed automatically to this repo.
+### **Key Features**
+- **Exoplanet Selection**: Explore star charts as they appear from different exoplanets.  
+- **Interactive Star Maps**: Draw constellations and interact with detailed star data.  
+- **Customization Options**: Advanced features include grid overlays and star details.  
+- **Storytelling**: Guided by *Rupert the Space Armadillo*, users can connect with the universe through creative exploration.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in the GPT Engineer UI.
+## **Project Details**
+The Astreaus Rupertus app combines real space data from the **Gaia mission** with exoplanet databases to generate unique star charts for each exoplanet. The app integrates interactive 3D visualizations and storytelling to make space exploration engaging and educational.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### **Educational Impact**
+- **For Students**: Introduces astronomy concepts interactively.  
+- **For Enthusiasts**: Offers tools to create and share constellations.  
+- **For Educators**: Aids in teaching space science and visualization.  
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## **Technologies Used**
+- **Gaia Space Data**: Star catalogs and exoplanet information.  
+- **Unity**: 3D visualization of star data.  
+- **React**: Frontend development for the web application.  
+- **Python**: Data processing and preparation.  
+- **AI Tools**:  
+  - ChatGPT & GitHub Copilot for code generation.  
+  - Suno & Audacity for audio generation and editing.  
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+## **Meet the Team**
+- **Julieth Lorne**  
+- **Laura Chavez**  
+- **A'sa Dickens**  
+- **Paul Muszynski**  
+- **Jay Rosen**  
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+---
 
-**Edit a file directly in GitHub**
+## **Resources and References**
+### Space Agency Data
+- **Gaia Space Data**  
+- **NASA Deep Star Maps**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### References
+- *Rupert the Space Armadillo*: Our mascot and guide, inspiring creativity and storytelling in space exploration.
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-All GPT Engineer projects can be deployed directly via the GPT Engineer app.
-
-Simply visit your project at [GPT Engineer](https://gptengineer.app/projects/ae2c240e-75d6-49d4-86b4-13e230b00a96/improve) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.gptengineer.app/tips-tricks/custom-domain/)
+Explore the universe like never before with **Astreaus Rupertus**. Guided by Rupert the Space Armadillo, unlock the mysteries of exoplanets and their skies. 🌌  
+[Visit the App](https://nasa-space-apps-astreaus-rupertus.gptengineer.run/)
