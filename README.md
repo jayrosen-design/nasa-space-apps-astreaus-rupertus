@@ -3,6 +3,10 @@
 - **Global Nominee**: Cape Canaveral, FL - Space Force Museum  
 - **Award**: Galactic Problem Solver  
 
+<div align="center">
+  <img src="https://github.com/jayrosen-design/nasa-space-apps-astreaus-rupertus/blob/main/astreaus-rupertus-images/frame_generic_light%20(15).png" alt="Astreaus Rupertus Banner" width="800">
+</div>
+
 ---
 
 ## **Exploring the Exosky with Rupert**
@@ -11,16 +15,17 @@
 
 ---
 
-## **Video Demos**
-1. [Overview of Astreaus Rupertus](https://youtu.be/wyHuolYbA-k)  
-2. [Interactive Features Explained](https://youtu.be/nasR1Y9SotQ)  
-
----
-
 ## **Project Overview**
 Our team, *Astreaus Rupertus*, developed a web application for the **NASA Space Apps Challenge 2024**, enabling users to explore the night sky from the perspective of over 5,500 known exoplanets. This interactive tool provides an educational and immersive experience for kids, students, and space enthusiasts.
 
-### **Key Features**
+<div align="center">
+  <img src="https://github.com/jayrosen-design/nasa-space-apps-astreaus-rupertus/blob/main/astreaus-rupertus-images/newspaper.jpeg" alt="Astreaus Rupertus in the News" width="600">
+  <p><em>Astreaus Rupertus featured in the news during the NASA Space Apps Challenge 2024</em></p>
+</div>
+
+---
+
+## **Key Features**
 - **Exoplanet Selection**: Explore star charts as they appear from different exoplanets.  
 - **Interactive Star Maps**: Draw constellations and interact with detailed star data.  
 - **Customization Options**: Advanced features include grid overlays and star details.  
@@ -49,12 +54,22 @@ The Astreaus Rupertus app combines real space data from the **Gaia mission** wit
 
 ---
 
-## **Meet the Team**
+## **Team**
+<div align="center">
+  <img src="https://github.com/jayrosen-design/nasa-space-apps-astreaus-rupertus/blob/main/astreaus-rupertus-images/team.png" alt="Astreaus Rupertus Team" width="800">
+</div>
+
 - **Julieth Lorne**  
 - **Laura Chavez**  
 - **A'sa Dickens**  
 - **Paul Muszynski**  
 - **Jay Rosen**  
+
+---
+
+## **Video Demos**
+1. [Overview of Astreaus Rupertus](https://youtu.be/wyHuolYbA-k)  
+2. [Interactive Features Explained](https://youtu.be/nasR1Y9SotQ)  
 
 ---
 
